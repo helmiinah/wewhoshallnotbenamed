@@ -4,6 +4,7 @@ def hello_world():
             print("hello world")
     if 1 > 0:
         print("Goodbye world!")
+    print("Pushing works, yay!")
 
 
 hello_world()
