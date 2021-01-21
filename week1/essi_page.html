@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <style>
+    body {
+        background-color: rgb(197, 238, 238);
+    }
+    .title-font {
+        font-family: 'futura-pt', sans-serif;
+        font-size: 30px;
+        font-weight: 200;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-align: center;
+        opacity: 1;
+        outline: 0 !important;
+        -webkit-font-smoothing: antialiased;
+        color: black;
+    }
+    .header-font {
+        font-family: 'futura-pt', sans-serif;
+        font-size: 15px;
+        font-weight: 200;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-align: center;
+        opacity: 1;
+        outline: 0 !important;
+        -webkit-font-smoothing: antialiased;
+        color: black;
+    }
+    .world {
+        width: 710px;
+        height: 500px;
+        position: relative;
+        padding-bottom: 10px;
+    }
+    .plane {
+        width: 30px;
+        height: 40px;
+        position: absolute; 
+        top: 170px; 
+        left: 400px; 
+        transform: rotate(20deg);
+    }
+    .text-position-center {
+        text-align: center;
+    }
+    .center {
+        display: block;
+        margin: 0 auto;
+    }
+    </style>
+    <script>
+        function movePlane() {
+            var elem = document.getElementById("airplane");   
+            var top = 170;
+            var left = 400;
+            var transform = ""; 
+            var id = setInterval(frame, 7);
+            function frame() {
+                if (top == 600) {
+                    clearInterval(id);
+                } else if (top == 450 && left == 900) {
+                    top++; 
+                    elem.style.top = top + "px";
+                    elem.style.transform = transform + "rotate(40deg)"; 
+                } else if (top == 450) {
+                    left++;
+                    elem.style.left = left + "px"; 
+                    elem.style.transform = transform + "rotate(0deg)";
+                } else {
+                    top++; 
+                    left++;
+                    elem.style.top = top + "px"; 
+                    elem.style.left = left + "px";
+                }
+            }
+        }        
+    </script>
+    <title>Hello World!</title>
+    </head>
+    <body>
+        <h1 class="title-font text-position-center">Hello World!</h1>
+        <h3 class="header-font text-position-center">Practice HTML website by Essi H.</h3>
+        <p><button onclick="movePlane()" class="center">Click Me</button></p> 
+        <div>
+            <img src="https://live.staticflickr.com/1231/1386592982_2f3c1e68b6_b.jpg" alt="World" class="world center">
+            <img id ="airplane" src="https://upload.wikimedia.org/wikipedia/commons/f/f5/Airplane-logo.png" alt="Plane" class="plane">
+        </div>
+        <div style="text-align:center">    
+            <a href="https://www.w3schools.com/js/js_htmldom_animate.asp" style="text-align:center;">Animation code inspired by W3schools.com</a>
+          </div>
+    </body>
+</html>
