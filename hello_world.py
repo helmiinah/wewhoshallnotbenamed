@@ -1,6 +1,7 @@
 def hello_world():
-    if 1 > 0:
-        print("hello world")
+    for i in range(1):
+        if 1 > 0:
+            print("hello world")
 
 
 hello_world()
