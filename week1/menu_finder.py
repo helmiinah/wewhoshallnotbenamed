@@ -20,7 +20,8 @@ def main():
     # Store all menu items (for every day available) to a list:
     list_items_dishes = soup.findAll("li", {"class": re.compile(r"menu-item .*")})
     for item in list_items_dishes:
-        pprint(item.get_text())
+        # pprint(item)  # get raw html
+        pprint(item.get_text())  # get text only
 
     # next: extracting the days for which each menu item belongs to (or if we only want the menu for the current day?)
     # and formatting
