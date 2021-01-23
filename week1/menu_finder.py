@@ -18,13 +18,17 @@ def main():
     soup = BeautifulSoup(html, 'html.parser')
 
     # Store all menu items (for every day available) to a list:
-    list_items_dishes = soup.findAll("li", {"class": re.compile(r"menu-item .*")})
-    for item in list_items_dishes:
-        # pprint(item)  # get raw html
-        pprint(item.get_text())  # get text only
-
-    # next: extracting the days for which each menu item belongs to (or if we only want the menu for the current day?)
-    # and formatting
-
-
+    list_items_dishes = soup.findAll(True, {'class':[re.compile(r'item-header'), re.compile(r"menu-item .*")]})
+    # Store menu items into list comprehension and filter items with removing reviews
+    list_items_with_days = [item for item in list_items_dishes if not "item-review" in item.find_parent("div")["class"]]
+    
+    # Format printing with adding new line after each day and remove extra spaces
+    for item in list_items_with_days:
+        if "item-header" in item.get("class"):
+            print()
+            print(item.get_text())
+        else:
+            string_item = re.sub(' +', ' ', item.get_text(separator=' '))
+            print(string_item)
+    
 main()
