@@ -18,9 +18,14 @@ def main():
     soup = BeautifulSoup(html, 'html.parser')
 
     # Store all menu items (for every day available) to a list:
-    list_items_dishes = soup.findAll(True, {'class':[re.compile(r'item-header'), re.compile(r"menu-item .*")]})
-    # Store menu items into list comprehension and filter items with removing reviews
-    list_items_with_days = [item for item in list_items_dishes if not "item-review" in item.find_parent("div")["class"]]
+    list_items_dishes = soup.findAll(True, {'class': [re.compile(r'item-header'), re.compile(r"menu-item item.*")]})
+
+    # Create a regex pattern to match a date format found in dish headers:
+    date_pattern = re.compile(r".*\d+\.\d+\..*")
+
+    # Store menu items into list comprehension and filter out review headers using the date pattern:
+    list_items_with_days = [item for item in list_items_dishes if "item-header" not in item.get("class")
+                            or re.match(date_pattern, item.get_text())]
     
     # Format printing with adding new line after each day and remove extra spaces
     for item in list_items_with_days:
