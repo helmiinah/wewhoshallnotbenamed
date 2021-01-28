@@ -48,7 +48,7 @@ def rewrite_token(t):
 
 
 def rewrite_query(query):  # rewrite every token in the query
-    #for i in range(len(query.split())):
+    # for i in range(len(query.split())):
     #    token = query.split()[i]
     #    if not token in terms and not token in d:
     #        if len(query.split()) == 1:
@@ -80,6 +80,7 @@ while True:
     query = input("Add a query (press enter to quit): ").lower()
     if query == "":
         break
+    print('Results')
 
     try:
         hits_matrix = eval(rewrite_query(query))
@@ -89,5 +90,6 @@ while True:
             print(f"Matching doc: [{doc_idx}] {documents[doc_idx][:50]}...")
     except KeyError:
         print('Bad query')
+    print()
 # print("Matching documents as vector (it is actually a matrix with one single row):", hits_matrix)
 # print("The coordinates of the non-zero elements:", hits_matrix.nonzero())
