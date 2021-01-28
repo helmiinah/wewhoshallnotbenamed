@@ -48,15 +48,43 @@ def rewrite_token(t):
 
 
 def rewrite_query(query):  # rewrite every token in the query
-    # for i in range(len(query.split())):
-    #    token = query.split()[i]
-    #    if not token in terms and not token in d:
-    #        if len(query.split()) == 1:
-    #            return None
-    #        elif i != 0:
-    #            prev = query.split()[i-1]
-    #            next = query.split()[i+1]
-    #            if prev in ["AND", "and"]:
+    for i in range(len(query.split())):
+       token = query.split()[i]
+       if not token in terms and not token in d:
+            if len(query.split()) == 1:
+               # 1. case: token is only element of query
+               # query = "unknown" 
+               return None
+            elif i == 0:
+               # 2. case: token is first element of query
+                next_token = query.split()[i+1].lower()
+                if next_token == "and":
+                   # query = "unknown AND ... "
+                   return None
+                elif next_token == "or":
+                    # query = "unknown OR ... "
+                    # return documents matching word after OR
+                    return rewrite_token(query.split()[i+2])
+            elif i == len(query.split()) - 1:
+                # 3. case: token is last element of query
+                prev_token = query.split()[i-1].lower()
+                if prev_token == "and":
+                   # query = " ... AND unknown"
+                   return None
+                elif prev_token == "or":
+                    # query = " ... OR unknown"
+                    # return documents matching word before OR
+                    return rewrite_token(query.split()[i-2])
+                elif prev_token == "not":
+                    # query = " ... NOT unknown"
+                    # TODO: return documents that do not contain token in question
+                    return 0
+            elif i != 0 and i < len(query.split()) - 1:
+                # 4. case: token is not first nor last element of query
+                continue
+            #    prev = query.split()[i-1]
+            #    next = query.split()[i+1]
+            #    if prev in ["AND", "and"]:
 
     return " ".join(rewrite_token(t) for t in query.split())
 
@@ -83,11 +111,14 @@ while True:
     print('Results')
 
     try:
-        hits_matrix = eval(rewrite_query(query))
-        hits_list = list(hits_matrix.nonzero()[1])
+        if rewrite_query(query) == None:
+            print("Unknown word in query.")
+        else:
+            hits_matrix = eval(rewrite_query(query))
+            hits_list = list(hits_matrix.nonzero()[1])
 
-        for doc_idx in hits_list[:10]:
-            print(f"Matching doc: [{doc_idx}] {documents[doc_idx][:50]}...")
+            for doc_idx in hits_list[:10]:
+                print(f"Matching doc: [{doc_idx}] {documents[doc_idx][:50]}...")
     except KeyError:
         print('Bad query')
     print()
