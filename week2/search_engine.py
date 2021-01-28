@@ -3,10 +3,10 @@ from bs4 import BeautifulSoup
 import re
 
 
-documents = ["This is a silly example",
-             "A better example",
-             "Nothing to see here",
-             "This is a great and long example"]
+toy_documents = ["This is a silly example",
+                 "A better example",
+                 "Nothing to see here",
+                 "This is a great and long example"]
 
 
 d = {"and": "&", "AND": "&",
@@ -14,10 +14,10 @@ d = {"and": "&", "AND": "&",
      "not": "1 -", "NOT": "1 -",
      "(": "(", ")": ")"}          # operator replacements
 
-with open('text_data.txt') as file:
+with open('text_data.txt', encoding="utf8") as file:
     contents = file.read()
 
-soup = BeautifulSoup(contents, 'lxml')
+soup = BeautifulSoup(contents, 'html.parser')
 
 test = soup.find_all('article')
 documents = [t.get_text().replace('\n', ' ') for t in test]
@@ -25,7 +25,7 @@ documents = [t.get_text().replace('\n', ' ') for t in test]
 # print(cleaned_documents[0])
 
 
-cv = CountVectorizer(lowercase=True, binary=True)
+cv = CountVectorizer(lowercase=True, binary=True, token_pattern=r"(?u)\b\w+\b")
 sparse_matrix = cv.fit_transform(documents)
 
 # print("Term-document matrix: (?)\n")
@@ -48,6 +48,15 @@ def rewrite_token(t):
 
 
 def rewrite_query(query):  # rewrite every token in the query
+    #for i in range(len(query.split())):
+    #    token = query.split()[i]
+    #    if not token in terms and not token in d:
+    #        if len(query.split()) == 1:
+    #            return None
+    #        elif i != 0:
+    #            prev = query.split()[i-1]
+    #            next = query.split()[i+1]
+    #            if prev in ["AND", "and"]:
 
     return " ".join(rewrite_token(t) for t in query.split())
 
@@ -67,16 +76,18 @@ t2i = cv.vocabulary_  # shorter notation: t2i = term-to-index
 sparse_td_matrix = sparse_matrix.T.tocsr()
 # print(sparse_td_matrix)
 
-query = " unicron".lower()
+while True:
+    query = input("Add a query (press enter to quit): ").lower()
+    if query == "":
+        break
 
-try:
-    hits_matrix = eval(rewrite_query(query))
-    hits_list = list(hits_matrix.nonzero()[1])
-    print(hits_list)
+    try:
+        hits_matrix = eval(rewrite_query(query))
+        hits_list = list(hits_matrix.nonzero()[1])
 
-    for doc_idx in hits_list:
-        print("Matching doc:", documents[doc_idx][:20])
-except:
-    print('Bad query')
+        for doc_idx in hits_list[:10]:
+            print(f"Matching doc: [{doc_idx}] {documents[doc_idx][:50]}...")
+    except KeyError:
+        print('Bad query')
 # print("Matching documents as vector (it is actually a matrix with one single row):", hits_matrix)
 # print("The coordinates of the non-zero elements:", hits_matrix.nonzero())
