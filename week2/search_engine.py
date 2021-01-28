@@ -2,17 +2,15 @@ from sklearn.feature_extraction.text import CountVectorizer
 from bs4 import BeautifulSoup
 import re
 
-
 toy_documents = ["This is a silly example",
                  "A better example",
                  "Nothing to see here",
                  "This is a great and long example"]
 
-
 d = {"and": "&", "AND": "&",
      "or": "|", "OR": "|",
      "not": "1 -", "NOT": "1 -",
-     "(": "(", ")": ")"}          # operator replacements
+     "(": "(", ")": ")"}  # operator replacements
 
 with open('text_data.txt', encoding="utf8") as file:
     contents = file.read()
@@ -35,9 +33,11 @@ sparse_matrix = cv.fit_transform(documents)
 dense_matrix = sparse_matrix.todense()
 
 # print("Term-document matrix:\n")
-td_matrix = dense_matrix.T   # .T transposes the matrix
+td_matrix = dense_matrix.T  # .T transposes the matrix
 
 terms = cv.get_feature_names()
+
+
 # print(terms)
 
 
@@ -49,36 +49,36 @@ def rewrite_token(t):
 
 def rewrite_query(query):  # rewrite every token in the query
     for i in range(len(query.split())):
-       token = query.split()[i]
-       if not token in terms and not token in d:
+        token = query.split()[i]
+        if not token in terms and not token in d:
             if len(query.split()) == 1:
-               # 1. case: token is only element of query
-               # query = "unknown" 
-               return None
+                # 1. case: token is only element of query
+                # query = "unknown"
+                return None
             elif i == 0:
-               # 2. case: token is first element of query
-                next_token = query.split()[i+1].lower()
+                # 2. case: token is first element of query
+                next_token = query.split()[i + 1].lower()
                 if next_token == "and":
-                   # query = "unknown AND ... "
-                   return None
+                    # query = "unknown AND ... "
+                    return None
                 elif next_token == "or":
                     # query = "unknown OR ... "
                     # return documents matching word after OR
-                    return rewrite_token(query.split()[i+2])
+                    return rewrite_token(query.split()[i + 2])
             elif i == len(query.split()) - 1:
                 # 3. case: token is last element of query
-                prev_token = query.split()[i-1].lower()
+                prev_token = query.split()[i - 1].lower()
                 if prev_token == "and":
-                   # query = " ... AND unknown"
-                   return None
+                    # query = " ... AND unknown"
+                    return None
                 elif prev_token == "or":
                     # query = " ... OR unknown"
                     # return documents matching word before OR
-                    return rewrite_token(query.split()[i-2])
+                    return rewrite_token(query.split()[i - 2])
                 elif prev_token == "not":
                     # query = " ... NOT unknown"
-                    # TODO: return documents that do not contain token in question
-                    return 0
+                    # return documents matching word before NOT
+                    return rewrite_token(query.split()[i - 2])
             elif i != 0 and i < len(query.split()) - 1:
                 # 4. case: token is not first nor last element of query
                 continue
@@ -111,7 +111,7 @@ while True:
     print('Results')
 
     try:
-        if rewrite_query(query) == None:
+        if rewrite_query(query) is None:
             print("Unknown word in query.")
         else:
             hits_matrix = eval(rewrite_query(query))
