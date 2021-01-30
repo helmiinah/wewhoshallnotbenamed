@@ -81,10 +81,35 @@ def rewrite_query(query):  # rewrite every token in the query
                     return rewrite_token(query.split()[i - 2])
             elif i != 0 and i < len(query.split()) - 1:
                 # 4. case: token is not first nor last element of query
-                continue
-            #    prev = query.split()[i-1]
-            #    next = query.split()[i+1]
-            #    if prev in ["AND", "and"]:
+                prev_token = query.split()[i - 1].lower()
+                next_token = query.split()[i + 1].lower()
+                # if there are two other words in the query in addition to unknown and both operator are "and":
+                if len(query.split()) == 5 and prev_token == "and" and next_token == "and":
+                    return None
+                elif prev_token == "or" and next_token == "or":
+                    # remove the current unknown word and the next operator "or" and recursively call function again:
+                    new_query = query.split()
+                    new_query.pop(i)
+                    new_query.pop(i)
+                    # print(" ".join(new_query))  <- print to inspect new query
+                    return rewrite_query(" ".join(new_query))
+                elif prev_token == "or" and next_token == "and":
+                    # remove current unknown word and the previous operator "or" and recursively call function again:
+                    new_query = query.split()
+                    new_query.pop(i)
+                    new_query.pop(i - 1)
+                    # print(" ".join(new_query))  <- print to inspect new query
+                    return rewrite_query(" ".join(new_query))
+                elif prev_token == "and" and next_token == "or":
+                    # remove current unknown word, the next operator "or" and the word before "or"
+                    # and recursively call function again:
+                    new_query = query.split()
+                    new_query.pop(i)
+                    new_query.pop(i)
+                    new_query.pop(i - 1)
+                    new_query.pop(i - 2)
+                    # print(" ".join(new_query))  <- print to inspect new query
+                    return rewrite_query(" ".join(new_query))
 
     return " ".join(rewrite_token(t) for t in query.split())
 
