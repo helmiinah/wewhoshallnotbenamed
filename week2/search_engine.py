@@ -52,10 +52,12 @@ def rewrite_query(query):  # rewrite every token in the query
     for i in range(len(query.split())):
         token = query.split()[i]
         if token not in terms and token not in d:
+
             if len(query.split()) == 1:
                 # 1. case: token is only element of query
                 # query = "unknown"
                 return None
+
             elif i == 0:
                 # 2. case: token is first element of query
                 next_token = query.split()[i + 1].lower()
@@ -66,10 +68,32 @@ def rewrite_query(query):  # rewrite every token in the query
                     # query = "unknown OR ... "
                     # return documents matching word after OR
                     return rewrite_token(query.split()[i + 2])
+
             elif len(query.split()) == 2 and query.split()[i-1] == "not":
                 # query = "NOT unknown"
                 # return a 1x100 numpy array filled with ones -> matches all documents
                 return "np.ones((1,len(documents)), dtype=int)"
+
+            elif len(query.split()) == 4 and query.split()[i-1] == "not":
+                if i-2 > 0:
+                    if query.split()[i-2] == "or":
+                        # query = "<known> OR NOT <unknown>"
+                        # -> match all documents
+                        return "np.ones((1,len(documents)), dtype=int)"
+                    if query.split()[i-2] == "and":
+                        # query = "<known> AND NOT <unknown>"
+                        # -> return matching documents for the first search term
+                        return rewrite_query(query.split()[i-3])
+                else:
+                    if query.split()[i+1] == "or":
+                        # query = "NOT <unknown> OR <known>"
+                        # -> match all documents
+                        return "np.ones((1,len(documents)), dtype=int)"
+                    if query.split()[i+1] == "and":
+                        # query = "<NOT unknown> AND <known>"
+                        # -> return matching documents for the last search term
+                        return rewrite_query(query.split()[i+2])
+
             elif i == len(query.split()) - 1:
                 # 3. case: token is last element of query
                 prev_token = query.split()[i - 1].lower()
@@ -84,6 +108,7 @@ def rewrite_query(query):  # rewrite every token in the query
                     # query = " ... NOT unknown"
                     # return documents matching word before NOT
                 #    return rewrite_token(query.split()[i - 2])
+
             elif i != 0 and i < len(query.split()) - 1:
                 # 4. case: token is not first nor last element of query
                 prev_token = query.split()[i - 1].lower()
