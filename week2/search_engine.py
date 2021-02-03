@@ -145,7 +145,9 @@ def rewrite_query(query):  # rewrite every token in the query
                 elif prev_token == "or":
                     # query = " ... OR unknown"
                     # return documents matching word before OR
-                    return rewrite_token(query_parts[i - 2])
+                    new_query = query.split()
+                    new_query = new_query[:-2]
+                    return rewrite_query(" ".join(new_query))
                 # elif prev_token == "not":
                     # query = " ... NOT unknown"
                     # return documents matching word before NOT
@@ -202,8 +204,8 @@ sparse_td_matrix = sparse_matrix.T.tocsr()
 # print(sparse_td_matrix)
 
 while True:
-    # test_query(query)
     query = input("Add a query (press enter to quit): ").lower().strip()
+    # test_query(query)
     if query == "":
         break
 
