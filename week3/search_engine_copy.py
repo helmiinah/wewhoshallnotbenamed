@@ -61,10 +61,7 @@ def search_wikipedia(query_string):
     # Vectorize query string
     words = query_string.split()
     vocab = gv.get_feature_names()
-    final_words = []
-    for w in words:
-        if w in vocab:
-            final_words.append(w)
+    final_words = [w for w in words if w in vocab]
     if not final_words:
         print("No matches")
     else:
