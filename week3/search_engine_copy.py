@@ -113,6 +113,7 @@ if __name__ == "__main__":
         elif engine == "1":
             search_wikipedia(query)
         else:
-            "Bad engine chosen"
+            print("Bad engine chosen, no search performed")
+            continue
 
     # refactoring, error handling
