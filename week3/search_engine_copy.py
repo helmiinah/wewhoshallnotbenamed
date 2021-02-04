@@ -1,6 +1,7 @@
 from sklearn.feature_extraction.text import CountVectorizer
 from bs4 import BeautifulSoup
 from sklearn.feature_extraction.text import TfidfVectorizer
+import nltk
 from nltk.stem.snowball import SnowballStemmer
 import re
 import numpy as np
@@ -8,7 +9,9 @@ import numpy as np
 toy_documents = ["This is a silly example",
                  "A better example",
                  "Nothing to see here",
-                 "This is a great and long example"]
+                 "This is a great and long example",
+                 "Raining mining housing adding nearest up"]
+
 
 d = {"and": "&", "AND": "&",
      "or": "|", "OR": "|",
@@ -51,24 +54,38 @@ def test_query(query):
 t2i = cv.vocabulary_
 sparse_td_matrix = sparse_matrix.T.tocsr()
 
-# RELEVANCE RANKING SEARCH
-
-gv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
-g_matrix = gv.fit_transform(documents).T.tocsr()
 
 stemmer = SnowballStemmer("english")
+
+
+def tokenize(text):
+    # if len(word) > 1 because I only want to retain words that are at least two characters before stemming, although I can't think of any such words that are not also stopwords
+    tokens = [word for word in nltk.word_tokenize(text) if len(word) > 1]
+    stems = [stemmer.stem(item) for item in tokens]
+    return stems
+
+
+# RELEVANCE RANKING SEARCH
+
+#tokenizer = tokenize
+gv = TfidfVectorizer(tokenizer=tokenize, lowercase=True,
+                     sublinear_tf=True, use_idf=True, norm="l2")
+g_matrix = gv.fit_transform(documents).T.tocsr()
+
 
 def search_wikipedia(query_string):
 
     # Vectorize query string
     words = query_string.split()
     vocab = gv.get_feature_names()
-    final_words = [w for w in words if w in vocab]
+
+    #final_words = [w for w in words if w in vocab]
+    final_words = [stemmer.stem(w) for w in words if stemmer.stem(w) in vocab]
     if not final_words:
         print("No matches")
     else:
         new_query_string = " ".join(final_words)
-        query_vec = gv.transform([ new_query_string ]).tocsc()
+        query_vec = gv.transform([new_query_string]).tocsc()
 
         # Cosine similarity
         hits = np.dot(query_vec, g_matrix)
@@ -79,16 +96,19 @@ def search_wikipedia(query_string):
                    reverse=True)
 
         # Output result
-        print("Your query '{:s}' matches the following documents:".format(query_string))
+        print("Your query '{:s}' matches the following documents:".format(
+            query_string))
         for i, (score, doc_idx) in enumerate(ranked_scores_and_doc_ids):
-            print("Doc #{:d} (score: {:.4f}): {:s}".format(i, score, documents[doc_idx][:50]))
+            print("Doc #{:d} (score: {:.4f}): {:s}".format(
+                i, score, documents[doc_idx][:50]))
         print()
 
 
 if __name__ == "__main__":
     print("Welcome to English Wikipedia search engine!")
     while True:
-        engine = input("Choose search engine (0 for boolean, 1 for relevance): ")
+        engine = input(
+            "Choose search engine (0 for boolean, 1 for relevance): ")
         query = input("Add a query (press enter to quit): ").lower().strip()
         if query == "":
             break
