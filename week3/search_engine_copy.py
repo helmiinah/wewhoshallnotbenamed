@@ -1,6 +1,7 @@
 from sklearn.feature_extraction.text import CountVectorizer
 from bs4 import BeautifulSoup
 from sklearn.feature_extraction.text import TfidfVectorizer
+from nltk.stem.snowball import SnowballStemmer
 import re
 import numpy as np
 
@@ -55,6 +56,7 @@ sparse_td_matrix = sparse_matrix.T.tocsr()
 gv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
 g_matrix = gv.fit_transform(documents).T.tocsr()
 
+stemmer = SnowballStemmer("english")
 
 def search_wikipedia(query_string):
 
