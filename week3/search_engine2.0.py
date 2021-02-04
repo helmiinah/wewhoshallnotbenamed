@@ -19,7 +19,6 @@ d = {"and": "&", "AND": "&",
      "(": "(", ")": ")"}
 
 documents = []
-stemmed_documents = []
 terms = []
 sparse_td_matrix = []
 t2i = []
