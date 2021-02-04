@@ -59,21 +59,31 @@ g_matrix = gv.fit_transform(documents).T.tocsr()
 def search_wikipedia(query_string):
 
     # Vectorize query string
-    query_vec = gv.transform([ query_string ]).tocsc()
+    words = query_string.split()
+    vocab = gv.get_feature_names()
+    final_words = []
+    for w in words:
+        if w in vocab:
+            final_words.append(w)
+    if not final_words:
+        print("No matches")
+    else:
+        new_query_string = " ".join(final_words)
+        query_vec = gv.transform([ new_query_string ]).tocsc()
 
-    # Cosine similarity
-    hits = np.dot(query_vec, g_matrix)
+        # Cosine similarity
+        hits = np.dot(query_vec, g_matrix)
 
-    # Rank hits
-    ranked_scores_and_doc_ids = \
-        sorted(zip(np.array(hits[hits.nonzero()])[0], hits.nonzero()[1]),
-               reverse=True)
-    
-    # Output result
-    print("Your query '{:s}' matches the following documents:".format(query_string))
-    for i, (score, doc_idx) in enumerate(ranked_scores_and_doc_ids):
-        print("Doc #{:d} (score: {:.4f}): {:s}".format(i, score, documents[doc_idx][:50]))
-    print()
+        # Rank hits
+        ranked_scores_and_doc_ids = \
+            sorted(zip(np.array(hits[hits.nonzero()])[0], hits.nonzero()[1]),
+                   reverse=True)
+
+        # Output result
+        print("Your query '{:s}' matches the following documents:".format(query_string))
+        for i, (score, doc_idx) in enumerate(ranked_scores_and_doc_ids):
+            print("Doc #{:d} (score: {:.4f}): {:s}".format(i, score, documents[doc_idx][:50]))
+        print()
 
 
 if __name__ == "__main__":
