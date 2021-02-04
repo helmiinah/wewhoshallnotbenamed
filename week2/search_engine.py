@@ -192,27 +192,26 @@ def test_query(query):
 t2i = cv.vocabulary_
 sparse_td_matrix = sparse_matrix.T.tocsr()
 
-print("Welcome to English Wikipedia search engine!")
-while True:
-    query = input("Add a query (press enter to quit): ").lower().strip()
-    # test_query(query)
-    if query == "":
-        break
+if __name__ == "__main__":
+    print("Welcome to English Wikipedia search engine!")
+    while True:
+        query = input("Add a query (press enter to quit): ").lower().strip()
+        if query == "":
+            break
+        try:
+            if rewrite_query(query) is None:
+                print("No matches.")
+            else:
+                hits_matrix = eval(rewrite_query(query))
+                hits_list = list(hits_matrix.nonzero()[1])
+                print('Results:')
+                print("Matched", len(hits_list), "documents.")
 
-    try:
-        if rewrite_query(query) is None:
-            print("No matches.")
-        else:
-            hits_matrix = eval(rewrite_query(query))
-            hits_list = list(hits_matrix.nonzero()[1])
-            print('Results:')
-            print("Matched", len(hits_list), "documents.")
+                for doc_idx in hits_list[:10]:
+                    print(
+                        f"Matching doc: [{doc_idx}] {documents[doc_idx][:50]}...")
+        except:  # (KeyError, SyntaxError):
+            print('Bad query, could not perform a search.')
+        print()
 
-            for doc_idx in hits_list[:10]:
-                print(
-                    f"Matching doc: [{doc_idx}] {documents[doc_idx][:50]}...")
-    except:  # (KeyError, SyntaxError):
-        print('Bad query, could not perform a search.')
-    print()
-
-# refactoring, error handling
+    # refactoring, error handling
