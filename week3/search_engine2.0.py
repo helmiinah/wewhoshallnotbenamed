@@ -22,10 +22,12 @@ documents = []
 terms = []
 sparse_td_matrix = []
 t2i = []
-gv = []
+gv = TfidfVectorizer()
 g_matrix = []
-gv_stem = []
+gv_stem = TfidfVectorizer()
 g_matrix_stem = []
+gv_ngram = TfidfVectorizer()
+g_matrix_ngram = []
 stemmer = SnowballStemmer("english")
 
 
@@ -76,6 +78,15 @@ def initialize():
     g_matrix_stem = gv_stem.fit_transform(documents).T.tocsr()
 
 
+def init_ngram_search(n):
+    global gv_ngram
+    global g_matrix_ngram
+    gv_ngram = TfidfVectorizer(lowercase=True,
+                               sublinear_tf=True, use_idf=True, norm="l2", ngram_range=(n, n))
+    g_matrix_ngram = gv_ngram.fit_transform(documents).T.tocsr()
+    return gv_ngram, g_matrix_ngram
+
+
 def rewrite_token(t):
     # for boolean search
     if t not in terms and t not in d:
@@ -121,16 +132,28 @@ def relevance_search(query_string):
     if '"' in query_string:  # exact search  <"searchword">
         query_string = query_string.replace('"', '')
         words = query_string.split()
-
-        vocab = gv.get_feature_names()
-        final_words = [w for w in words if w in vocab]
-        if not final_words:
-            print("No matches")
-            return
-        new_query_string = " ".join(final_words)
-        query_vec = gv.transform([new_query_string]).tocsc()
-        # Cosine similarity
-        hits = np.dot(query_vec, g_matrix)
+        if len(words) == 1:
+            # Exact single-term search
+            vocab = gv.get_feature_names()
+            final_words = [w for w in words if w in vocab]
+            if not final_words:
+                print("No matches")
+                return
+            new_query_string = " ".join(final_words)
+            query_vec = gv.transform([new_query_string]).tocsc()
+            # Cosine similarity
+            hits = np.dot(query_vec, g_matrix)
+        else:
+            # Exact multi-word search
+            print(f"Searching for ngram of length {len(words)}...")
+            gv_ngram, g_matrix_ngram = init_ngram_search(len(words))
+            vocab = gv_ngram.get_feature_names()
+            if query_string not in vocab:
+                print(f"No matches for n-gram '{query_string}'.")
+                return
+            query_vec = gv_ngram.transform([query_string]).tocsc()
+            # Cosine similarity
+            hits = np.dot(query_vec, g_matrix_ngram)
 
     else:  # stemming can be used
         vocab = gv_stem.get_feature_names()
@@ -153,7 +176,7 @@ def relevance_search(query_string):
     print("Your query '{:s}' matches the following documents:".format(
         query_string))
     for i, (score, doc_idx) in enumerate(ranked_scores_and_doc_ids):
-        print("Doc #{:d} (score: {:.4f}): {:s}".format(
+        print("Doc #{:d} (score: {:.4f}): {:s}...".format(
             i, score, documents[doc_idx][:50]))
     print()
 
