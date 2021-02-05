@@ -26,8 +26,6 @@ gv = TfidfVectorizer()
 g_matrix = []
 gv_stem = TfidfVectorizer()
 g_matrix_stem = []
-gv_ngram = TfidfVectorizer()
-g_matrix_ngram = []
 stemmer = SnowballStemmer("english")
 
 
@@ -43,8 +41,6 @@ def initialize():
     global terms
     global sparse_td_matrix
     global t2i
-    global gv
-    global g_matrix
     global gv_stem
     global g_matrix_stem
 
@@ -66,25 +62,21 @@ def initialize():
     t2i = cv.vocabulary_
     sparse_td_matrix = sparse_matrix.T.tocsr()
 
-    # initialize relevance search tools
-    # no stemming
-    gv = TfidfVectorizer(lowercase=True,
-                         sublinear_tf=True, use_idf=True, norm="l2")
-    g_matrix = gv.fit_transform(documents).T.tocsr()
-
-    # stemming
+    # initialize relevance search tools for stemming
     gv_stem = TfidfVectorizer(tokenizer=tokenize, lowercase=True,
                               sublinear_tf=True, use_idf=True, norm="l2")
     g_matrix_stem = gv_stem.fit_transform(documents).T.tocsr()
 
 
-def init_ngram_search(n):
-    global gv_ngram
-    global g_matrix_ngram
-    gv_ngram = TfidfVectorizer(lowercase=True,
-                               sublinear_tf=True, use_idf=True, norm="l2", ngram_range=(n, n))
-    g_matrix_ngram = gv_ngram.fit_transform(documents).T.tocsr()
-    return gv_ngram, g_matrix_ngram
+def init_exact_search(n):
+    # Exact search tools are initialized independently, as number of query words is needed and that is not known
+    # until later. This initialization works for both single-word and multi-word searches.
+    global gv
+    global g_matrix
+    gv = TfidfVectorizer(lowercase=True,
+                         sublinear_tf=True, use_idf=True, norm="l2", ngram_range=(n, n))
+    g_matrix = gv.fit_transform(documents).T.tocsr()
+    return gv, g_matrix
 
 
 def rewrite_token(t):
@@ -129,31 +121,21 @@ def relevance_search(query_string):
     # Vectorize query string
     words = query_string.split()
 
-    if '"' in query_string:  # exact search  <"searchword">
+    if '"' in query_string:  # exact search  <"searchword"> or <"searchword1 searchword2...">
         query_string = query_string.replace('"', '')
         words = query_string.split()
-        if len(words) == 1:
-            # Exact single-term search
-            vocab = gv.get_feature_names()
-            final_words = [w for w in words if w in vocab]
-            if not final_words:
-                print("No matches")
-                return
-            new_query_string = " ".join(final_words)
-            query_vec = gv.transform([new_query_string]).tocsc()
-            # Cosine similarity
-            hits = np.dot(query_vec, g_matrix)
-        else:
-            # Exact multi-word search
-            print(f"Searching for ngram of length {len(words)}...")
-            gv_ngram, g_matrix_ngram = init_ngram_search(len(words))
-            vocab = gv_ngram.get_feature_names()
-            if query_string not in vocab:
-                print(f"No matches for n-gram '{query_string}'.")
-                return
-            query_vec = gv_ngram.transform([query_string]).tocsc()
-            # Cosine similarity
-            hits = np.dot(query_vec, g_matrix_ngram)
+        if len(words) > 1:
+            print(f"Searching for n-gram of length {len(words)}...")
+        gv, g_matrix = init_exact_search(len(words))
+        vocab = gv.get_feature_names()
+        # Because of the n-gram parameter given to vectorizer, the query string is in its entirety one token, so
+        # no need to remove unknown words here.
+        if query_string not in vocab:
+            print(f"No matches for exact query '{query_string}'.")
+            return
+        query_vec = gv.transform([query_string]).tocsc()
+        # Cosine similarity
+        hits = np.dot(query_vec, g_matrix)
 
     else:  # stemming can be used
         vocab = gv_stem.get_feature_names()
