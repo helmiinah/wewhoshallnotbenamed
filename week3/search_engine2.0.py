@@ -117,50 +117,137 @@ def boolean_search(query):
     print()
 
 
+def match_stems(words):
+    vocab = gv_stem.get_feature_names()
+    final_words = [stemmer.stem(w)
+                    for w in words if stemmer.stem(w) in vocab]
+
+    if final_words:
+        new_query_string = " ".join(final_words)
+        stem_query_vec = gv_stem.transform([new_query_string]).tocsc()
+    else:
+        print(f"No matches for stemmed search '{words}'")
+        print()
+        return None
+
+    return stem_query_vec
+
+
+def match_exact(words):
+    exact_query_words = words.split()
+    if len(exact_query_words) > 1:
+        print(f"Searching for n-gram of length {len(exact_query_words)}...")
+    gv, g_matrix = init_exact_search(len(exact_query_words))
+    vocab = gv.get_feature_names()
+    # Because of the n-gram parameter given to vectorizer, the query string is in its entirety one token, so
+    # no need to remove unknown words here.
+    if words in vocab:
+        exact_query_vec = gv.transform([words]).tocsc()
+    else:
+        print(f"No matches for exact query '{words}'.")
+        print()
+        return None
+    
+    return exact_query_vec
+
+
+def ranked_scores_and_doc_ids(hits):
+     return sorted(zip(np.array(hits[hits.nonzero()])[0], hits.nonzero()[1]),
+                    reverse=True)
+
+
 def relevance_search(query_string):
     # Vectorize query string
     words = query_string.split()
 
     if '"' in query_string:  # exact search  <"searchword"> or <"searchword1 searchword2...">
-        query_string = query_string.replace('"', '')
-        words = query_string.split()
-        if len(words) > 1:
-            print(f"Searching for n-gram of length {len(words)}...")
-        gv, g_matrix = init_exact_search(len(words))
-        vocab = gv.get_feature_names()
-        # Because of the n-gram parameter given to vectorizer, the query string is in its entirety one token, so
-        # no need to remove unknown words here.
-        if query_string not in vocab:
-            print(f"No matches for exact query '{query_string}'.")
-            return
-        query_vec = gv.transform([query_string]).tocsc()
-        # Cosine similarity
-        hits = np.dot(query_vec, g_matrix)
+        # check if search structure is: 'searchword "searchword1 searchword2"'
+        # separate them into different searches
+        stem_words = [word for word in words if '"' not in word]
+
+        # TODO: there must be better way to extract the exact search word from original query, so 3 lines under this 
+        # can and should be refactored:
+        exact_words = [query_string.replace(word, "") for word in stem_words]
+        joined = ' '.join(exact_words)
+        remove_quotation = joined.replace('"', '')
+        r = re.compile(r'^\s')
+        exact_query = r.sub(r'', remove_quotation)
+
+
+        # Check if search contained stemmable search terms and continue search from there
+        if len(stem_words) != 0:
+            stem_query_vec = match_stems(stem_words)
+            exact_query_vec = match_exact(exact_query)
+
+
+            # Output result
+            print("Your query '{:s}' matches the following documents:".format(
+                query_string))
+
+            # Check if word was found in stem search
+            if stem_query_vec is not None:
+                # Cosine similarity
+                stem_hits = np.dot(stem_query_vec, g_matrix_stem)
+
+                # Rank hits for stemmed
+                stem_rank_hits = ranked_scores_and_doc_ids(stem_hits)
+
+                for i, (score, doc_idx) in enumerate(stem_rank_hits):
+                    print("Stemmed search term results: ")
+                    print("Doc #{:d} (score: {:.4f}): {:s}...".format(
+                        i, score, documents[doc_idx][:50]))
+                print()
+            
+            # Check if word was found in exact search
+            if exact_query_vec is not None:
+                # Cosine similarity
+                exact_hits = np.dot(exact_query_vec, g_matrix)
+
+                # Rank hits for exact
+                exact_rank_hits = ranked_scores_and_doc_ids(exact_hits)
+    
+                for i, (score, doc_idx) in enumerate(exact_rank_hits):
+                    print("Exact seach term results: ")
+                    print("Doc #{:d} (score: {:.4f}): {:s}...".format(
+                        i, score, documents[doc_idx][:50]))
+                print()
+
+        else:
+            query_string = query_string.replace('"', '')
+            query_vec = match_exact(query_string)
+
+            # Cosine similarity
+            hits = np.dot(query_vec, g_matrix)
+
+            # Rank hits
+            rank_hits = ranked_scores_and_doc_ids(hits)
+
+            # Output result
+            print("Your query '{:s}' matches the following documents:".format(
+                query_string))
+    
+            for i, (score, doc_idx) in enumerate(rank_hits):
+                print("Doc #{:d} (score: {:.4f}): {:s}...".format(
+                    i, score, documents[doc_idx][:50]))
+            print()
 
     else:  # stemming can be used
-        vocab = gv_stem.get_feature_names()
-        final_words = [stemmer.stem(w)
-                       for w in words if stemmer.stem(w) in vocab]
-        if not final_words:
-            print("No matches")
-            return
-        new_query_string = " ".join(final_words)
-        query_vec = gv_stem.transform([new_query_string]).tocsc()
+        query_vec = match_stems(words)
+
         # Cosine similarity
         hits = np.dot(query_vec, g_matrix_stem)
 
-    # Rank hits
-    ranked_scores_and_doc_ids = \
-        sorted(zip(np.array(hits[hits.nonzero()])[0], hits.nonzero()[1]),
-               reverse=True)
+        # Rank hits
+        rank_hits = ranked_scores_and_doc_ids(hits)
+            
 
-    # Output result
-    print("Your query '{:s}' matches the following documents:".format(
-        query_string))
-    for i, (score, doc_idx) in enumerate(ranked_scores_and_doc_ids):
-        print("Doc #{:d} (score: {:.4f}): {:s}...".format(
-            i, score, documents[doc_idx][:50]))
-    print()
+        # Output result
+        print("Your query '{:s}' matches the following documents:".format(
+            query_string))
+        for i, (score, doc_idx) in enumerate(rank_hits):
+            print("Doc #{:d} (score: {:.4f}): {:s}...".format(
+                i, score, documents[doc_idx][:50]))
+        print()
 
 
 if __name__ == "__main__":
