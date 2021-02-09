@@ -151,6 +151,36 @@ def match_exact(words):
     return exact_query_vec
 
 
+def match_wildcard(words):
+    # This works similarly to exact searches: the no. of words in the query determines the n-gram length
+    # that is used for searches. Combined searches with word stems are not supported yet.
+    ngram_len = len(words.split())
+    gv, g_matrix = init_exact_search(ngram_len)
+    vocab = gv.get_feature_names()
+
+    # Replace the wildcard with a regex pattern matching 0 or more characters:
+    word_no_wc = words.replace("*", ".*")
+
+    # Compile a regex pattern based on the query word:
+    wc_pattern = re.compile(word_no_wc)
+
+    # Find all matching words in the vocabulary and form a new query word list:
+    query_words = [w for w in vocab if re.fullmatch(wc_pattern, w)]
+    if query_words:
+        if ngram_len > 1:
+            print("Looking for n-grams:", ", ".join(query_words))
+        else:
+            print("Looking for words:", ", ".join(query_words))
+        new_query_string = " ".join(query_words)
+        query_vec = gv.transform([new_query_string]).tocsc()
+    else:
+        print(f"No matches for wildcard search '{words}'")
+        print()
+        return None
+
+    return query_vec
+
+
 def ranked_scores_and_doc_ids(hits):
      return sorted(zip(np.array(hits[hits.nonzero()])[0], hits.nonzero()[1]),
                     reverse=True)
@@ -226,6 +256,24 @@ def relevance_search(query_string):
             print("Your query '{:s}' matches the following documents:".format(
                 query_string))
     
+            for i, (score, doc_idx) in enumerate(rank_hits):
+                print("Doc #{:d} (score: {:.4f}): {:s}...".format(
+                    i, score, documents[doc_idx][:50]))
+            print()
+
+    elif "*" in query_string:
+        query_vec = match_wildcard(query_string)
+
+        # Cosine similarity
+        hits = np.dot(query_vec, g_matrix)
+
+        # Rank hits
+        rank_hits = ranked_scores_and_doc_ids(hits)
+
+        # Output result
+        if query_vec is not None:
+            print("Your query '{:s}' matches the following documents:".format(
+                query_string))
             for i, (score, doc_idx) in enumerate(rank_hits):
                 print("Doc #{:d} (score: {:.4f}): {:s}...".format(
                     i, score, documents[doc_idx][:50]))
