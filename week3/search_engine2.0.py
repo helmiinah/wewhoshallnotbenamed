@@ -12,7 +12,6 @@ toy_documents = ["This is a silly example",
                  "This is a great and long example",
                  "Raining mining housing adding nearest up"]
 
-
 d = {"and": "&", "AND": "&",
      "or": "|", "OR": "|",
      "not": "1 -", "NOT": "1 -",
@@ -120,7 +119,7 @@ def boolean_search(query):
 def match_stems(words):
     vocab = gv_stem.get_feature_names()
     final_words = [stemmer.stem(w)
-                    for w in words if stemmer.stem(w) in vocab]
+                   for w in words if stemmer.stem(w) in vocab]
 
     if final_words:
         new_query_string = " ".join(final_words)
@@ -147,7 +146,7 @@ def match_exact(words):
         print(f"No matches for exact query '{words}'.")
         print()
         return None
-    
+
     return exact_query_vec
 
 
@@ -182,8 +181,8 @@ def match_wildcard(words):
 
 
 def ranked_scores_and_doc_ids(hits):
-     return sorted(zip(np.array(hits[hits.nonzero()])[0], hits.nonzero()[1]),
-                    reverse=True)
+    return sorted(zip(np.array(hits[hits.nonzero()])[0], hits.nonzero()[1]),
+                  reverse=True)
 
 
 def relevance_search(query_string):
@@ -194,8 +193,6 @@ def relevance_search(query_string):
         # check if search structure is: 'searchword "searchword1 searchword2"'
         # separate them into different searches
 
-        # TODO: there must be better way to extract the exact search word from original query, so 3 lines under this
-        # can and should be refactored:
         exact_words = re.findall(r'"[^"]+"', query_string)
         stem_query = query_string
         for phrase in exact_words:
@@ -203,12 +200,10 @@ def relevance_search(query_string):
         stem_words = stem_query.split()
         exact_query = ' '.join(exact_words).replace('"', '')
 
-
         # Check if search contained stemmable search terms and continue search from there
         if len(stem_words) != 0:
             stem_query_vec = match_stems(stem_words)
             exact_query_vec = match_exact(exact_query)
-
 
             # Output result
             print("Your query '{:s}' matches the following documents:".format(
@@ -227,7 +222,7 @@ def relevance_search(query_string):
                     print("Doc #{:d} (score: {:.4f}): {:s}...".format(
                         i, score, documents[doc_idx][:50]))
                 print()
-            
+
             # Check if word was found in exact search
             if exact_query_vec is not None:
                 # Cosine similarity
@@ -246,20 +241,21 @@ def relevance_search(query_string):
             query_string = query_string.replace('"', '')
             query_vec = match_exact(query_string)
 
-            # Cosine similarity
-            hits = np.dot(query_vec, g_matrix)
+            if query_vec is not None:
+                # Cosine similarity
+                hits = np.dot(query_vec, g_matrix)
 
-            # Rank hits
-            rank_hits = ranked_scores_and_doc_ids(hits)
+                # Rank hits
+                rank_hits = ranked_scores_and_doc_ids(hits)
 
-            # Output result
-            print("Your query '{:s}' matches the following documents:".format(
-                query_string))
-    
-            for i, (score, doc_idx) in enumerate(rank_hits):
-                print("Doc #{:d} (score: {:.4f}): {:s}...".format(
-                    i, score, documents[doc_idx][:50]))
-            print()
+                # Output result
+                print("Your query '{:s}' matches the following documents:".format(
+                    query_string))
+
+                for i, (score, doc_idx) in enumerate(rank_hits):
+                    print("Doc #{:d} (score: {:.4f}): {:s}...".format(
+                        i, score, documents[doc_idx][:50]))
+                print()
 
     elif "*" in query_string:
         query_vec = match_wildcard(query_string)
@@ -287,7 +283,6 @@ def relevance_search(query_string):
 
         # Rank hits
         rank_hits = ranked_scores_and_doc_ids(hits)
-            
 
         # Output result
         print("Your query '{:s}' matches the following documents:".format(
