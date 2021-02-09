@@ -163,15 +163,15 @@ def relevance_search(query_string):
     if '"' in query_string:  # exact search  <"searchword"> or <"searchword1 searchword2...">
         # check if search structure is: 'searchword "searchword1 searchword2"'
         # separate them into different searches
-        stem_words = [word for word in words if '"' not in word]
 
-        # TODO: there must be better way to extract the exact search word from original query, so 3 lines under this 
+        # TODO: there must be better way to extract the exact search word from original query, so 3 lines under this
         # can and should be refactored:
-        exact_words = [query_string.replace(word, "") for word in stem_words]
-        joined = ' '.join(exact_words)
-        remove_quotation = joined.replace('"', '')
-        r = re.compile(r'^\s')
-        exact_query = r.sub(r'', remove_quotation)
+        exact_words = re.findall(r'"[^"]+"', query_string)
+        stem_query = query_string
+        for phrase in exact_words:
+            stem_query = stem_query.replace(phrase, "")
+        stem_words = stem_query.split()
+        exact_query = ' '.join(exact_words).replace('"', '')
 
 
         # Check if search contained stemmable search terms and continue search from there
@@ -192,8 +192,8 @@ def relevance_search(query_string):
                 # Rank hits for stemmed
                 stem_rank_hits = ranked_scores_and_doc_ids(stem_hits)
 
+                print("Stemmed search term results: ")
                 for i, (score, doc_idx) in enumerate(stem_rank_hits):
-                    print("Stemmed search term results: ")
                     print("Doc #{:d} (score: {:.4f}): {:s}...".format(
                         i, score, documents[doc_idx][:50]))
                 print()
@@ -205,9 +205,9 @@ def relevance_search(query_string):
 
                 # Rank hits for exact
                 exact_rank_hits = ranked_scores_and_doc_ids(exact_hits)
-    
+
+                print("Exact seach term results: ")
                 for i, (score, doc_idx) in enumerate(exact_rank_hits):
-                    print("Exact seach term results: ")
                     print("Doc #{:d} (score: {:.4f}): {:s}...".format(
                         i, score, documents[doc_idx][:50]))
                 print()
