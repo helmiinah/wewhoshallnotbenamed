@@ -7,8 +7,12 @@
         <h1>Find pictures</h1>
         <!--Reload the page with variable "query" in the URL-->
         <form>
-            <input type="text" name="query" autofocus>
-            <input type="submit" value="Search">
+          <input type="radio" id="boolean" name="engine" value="boolean" checked>
+          <label for="boolean">Boolean search</label><br>
+          <input type="radio" id="relevance" name="engine" value="relevance">
+          <label for="relevance">Relevance</label><br>
+          <input type="text" name="query" autofocus>
+          <input type="submit" value="Search">
         </form>
         <table>
             <!--Go through each item in the "matches" variable sent from
@@ -16,9 +20,7 @@
             {% for item in matches %}
             <tr>
                 <!--Display the name of the item based on the "name" key-->
-                <td>{{ item["name"] }}</td>
-                <!--Display the image of the item based on the "source" key-->
-                <td><img src="/static/{{ item["source"] }}" style="width: 400px; height 100%"></td>
+                <td>{{ item }}</td>
             </tr>
             <!--End for loop-->
             {% endfor %}
