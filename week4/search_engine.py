@@ -284,22 +284,22 @@ def relevance_search(query_string):
 
     else:  # stemming can be used
         query_vec = match_stems(words)
-
-        # Cosine similarity
-        hits = np.dot(query_vec, g_matrix_stem)
-
-        # Rank hits
-        rank_hits = ranked_scores_and_doc_ids(hits)
-
         # Output result
         # print("Your query '{:s}' matches the following documents:".format(
         #     query_string))
-        for i, (score, doc_idx) in enumerate(rank_hits):
-            matches.append(documents[doc_idx][:50])
+        if query_vec is not None:
+            # Cosine similarity
+            hits = np.dot(query_vec, g_matrix_stem)
+
+            # Rank hits
+            rank_hits = ranked_scores_and_doc_ids(hits)
+            for i, (score, doc_idx) in enumerate(rank_hits):
+                matches.append(documents[doc_idx][:50])
         #     print("Doc #{:d} (score: {:.4f}): {:s}...".format(
         #         i, score, documents[doc_idx][:50]))
-        return matches
-
+            return matches
+    
+    return matches
 
 
 if __name__ == "__main__":
