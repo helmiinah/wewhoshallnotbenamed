@@ -18,6 +18,7 @@ d = {"and": "&", "AND": "&",
      "(": "(", ")": ")"}
 
 documents = []
+doc_names = []
 terms = []
 sparse_td_matrix = []
 t2i = []
@@ -37,6 +38,7 @@ def tokenize(text):
 def initialize():
     # to save changes globally
     global documents
+    global doc_names
     global terms
     global sparse_td_matrix
     global t2i
@@ -50,6 +52,9 @@ def initialize():
     soup = BeautifulSoup(contents, 'html.parser')
     articles = soup.find_all('article')
     documents = [t.get_text().replace('\n', ' ') for t in articles]
+
+    # Store document names to list:
+    doc_names = [n.get('name') for n in articles]
 
     # initialize boolean search tools
     cv = CountVectorizer(lowercase=True, binary=True,
@@ -105,12 +110,12 @@ def boolean_search(query):
         else:
             hits_matrix = eval(rewrite_query(query))
             hits_list = list(hits_matrix.nonzero()[1])
-            #print('Results:')
-            #print("Matched", len(hits_list), "documents.")
-            matches=[]
+            # print('Results:')
+            # print("Matched", len(hits_list), "documents.")
+            matches = []
             for doc_idx in hits_list[:10]:
-              matches.append(documents[doc_idx][:50])
-                #print(
+                matches.append({"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
+                # print(
                 #    f"Matching doc: [{doc_idx}] {documents[doc_idx][:50]}...")
             return matches
     except:
@@ -190,7 +195,7 @@ def ranked_scores_and_doc_ids(hits):
 def relevance_search(query_string):
     # Vectorize query string
     words = query_string.split()
-    matches=[]
+    matches = []
 
     if '"' in query_string:  # exact search  <"searchword"> or <"searchword1 searchword2...">
         # check if search structure is: 'searchword "searchword1 searchword2"'
@@ -220,9 +225,9 @@ def relevance_search(query_string):
                 # Rank hits for stemmed
                 stem_rank_hits = ranked_scores_and_doc_ids(stem_hits)
 
-                #print("Stemmed search term results: ")
+                # print("Stemmed search term results: ")
                 for i, (score, doc_idx) in enumerate(stem_rank_hits):
-                    matches.append(documents[doc_idx][:50])
+                    matches.append({"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
                 #     print("Doc #{:d} (score: {:.4f}): {:s}...".format(
                 #         i, score, documents[doc_idx][:50]))
                 return matches
@@ -235,9 +240,9 @@ def relevance_search(query_string):
                 # Rank hits for exact
                 exact_rank_hits = ranked_scores_and_doc_ids(exact_hits)
 
-                #print("Exact seach term results: ")
+                # print("Exact seach term results: ")
                 for i, (score, doc_idx) in enumerate(exact_rank_hits):
-                    matches.append(documents[doc_idx][:50])
+                    matches.append({"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
                 #    print("Doc #{:d} (score: {:.4f}): {:s}...".format(
                 #        i, score, documents[doc_idx][:50]))
                 return matches
@@ -258,7 +263,7 @@ def relevance_search(query_string):
                     query_string))
 
                 for i, (score, doc_idx) in enumerate(rank_hits):
-                    matches.append(documents[doc_idx][:50])
+                    matches.append({"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
                 #    print("Doc #{:d} (score: {:.4f}): {:s}...".format(
                 #        i, score, documents[doc_idx][:50]))
                 return matches
@@ -277,7 +282,7 @@ def relevance_search(query_string):
             # print("Your query '{:s}' matches the following documents:".format(
             #     query_string))
             for i, (score, doc_idx) in enumerate(rank_hits):
-                matches.append(documents[doc_idx][:50])
+                matches.append({"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
             #     print("Doc #{:d} (score: {:.4f}): {:s}...".format(
             #         i, score, documents[doc_idx][:50]))
             return matches
@@ -294,11 +299,11 @@ def relevance_search(query_string):
             # Rank hits
             rank_hits = ranked_scores_and_doc_ids(hits)
             for i, (score, doc_idx) in enumerate(rank_hits):
-                matches.append(documents[doc_idx][:50])
-        #     print("Doc #{:d} (score: {:.4f}): {:s}...".format(
-        #         i, score, documents[doc_idx][:50]))
+                matches.append({"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
+            #     print("Doc #{:d} (score: {:.4f}): {:s}...".format(
+            #         i, score, documents[doc_idx][:50]))
             return matches
-    
+
     return matches
 
 

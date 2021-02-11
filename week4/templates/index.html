@@ -1,11 +1,14 @@
 <html>
     <head>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@200;300&display=swap" rel="stylesheet">
         <meta charset="utf-8">
         <title>Search engine</title>
         <style>
           body {
               background-color: azure;
-              padding: 25px
+              padding: 25px;
+              font-family: 'Titillium Web'
           }
           input, label, table {
             padding: 15px; 
@@ -26,12 +29,13 @@
           <input type="submit" value="Search">
         </form>
         <table>
+            <tr><td><h4>{{ number }} matches for query "{{ query }}":</h4></td></tr>
             <!--Go through each item in the "matches" variable sent from
                 search() function in the Flask app-->
             {% for item in matches %}
             <tr>
                 <!--Display the name of the item based on the "name" key-->
-                <td>{{ item }}</td>
+                <td><a href="/{{item['id']}}">{{ item["name"] }}</a></td>
             </tr>
             <!--End for loop-->
             {% endfor %}
