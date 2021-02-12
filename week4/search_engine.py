@@ -114,13 +114,14 @@ def boolean_search(query):
             # print("Matched", len(hits_list), "documents.")
             matches = []
             for doc_idx in hits_list[:10]:
-                matches.append({"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
+                matches.append(
+                    {"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
                 # print(
                 #    f"Matching doc: [{doc_idx}] {documents[doc_idx][:50]}...")
             return matches
     except:
         print('Bad query, could not perform a search.')
-    print()
+    return []
 
 
 def match_stems(words):
@@ -227,7 +228,8 @@ def relevance_search(query_string):
 
                 # print("Stemmed search term results: ")
                 for i, (score, doc_idx) in enumerate(stem_rank_hits):
-                    matches.append({"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
+                    matches.append(
+                        {"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
                 #     print("Doc #{:d} (score: {:.4f}): {:s}...".format(
                 #         i, score, documents[doc_idx][:50]))
                 return matches
@@ -242,7 +244,8 @@ def relevance_search(query_string):
 
                 # print("Exact seach term results: ")
                 for i, (score, doc_idx) in enumerate(exact_rank_hits):
-                    matches.append({"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
+                    matches.append(
+                        {"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
                 #    print("Doc #{:d} (score: {:.4f}): {:s}...".format(
                 #        i, score, documents[doc_idx][:50]))
                 return matches
@@ -263,7 +266,8 @@ def relevance_search(query_string):
                     query_string))
 
                 for i, (score, doc_idx) in enumerate(rank_hits):
-                    matches.append({"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
+                    matches.append(
+                        {"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
                 #    print("Doc #{:d} (score: {:.4f}): {:s}...".format(
                 #        i, score, documents[doc_idx][:50]))
                 return matches
@@ -282,7 +286,8 @@ def relevance_search(query_string):
             # print("Your query '{:s}' matches the following documents:".format(
             #     query_string))
             for i, (score, doc_idx) in enumerate(rank_hits):
-                matches.append({"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
+                matches.append(
+                    {"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
             #     print("Doc #{:d} (score: {:.4f}): {:s}...".format(
             #         i, score, documents[doc_idx][:50]))
             return matches
@@ -299,7 +304,8 @@ def relevance_search(query_string):
             # Rank hits
             rank_hits = ranked_scores_and_doc_ids(hits)
             for i, (score, doc_idx) in enumerate(rank_hits):
-                matches.append({"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
+                matches.append(
+                    {"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
             #     print("Doc #{:d} (score: {:.4f}): {:s}...".format(
             #         i, score, documents[doc_idx][:50]))
             return matches

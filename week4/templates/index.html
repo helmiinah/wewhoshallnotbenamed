@@ -1,45 +1,70 @@
 <html>
-    <head>
-        <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@200;300&display=swap" rel="stylesheet">
-        <meta charset="utf-8">
-        <title>Search engine</title>
-        <style>
-          body {
-              background-color: azure;
-              padding: 25px;
-              font-family: 'Titillium Web'
-          }
-          input, label, table {
-            padding: 15px; 
-            margin: 5px
-          }
-        </style>
-    </head>
-    <body>
-        <h1><b>Welcome to Wikipedia search</b></h1>
-        <h3> Please select your search engine</h3>
-        
-        <form>
-          <input type="radio" id="boolean" name="engine" value="boolean" checked>
-          <label for="boolean">Boolean search</label><br>
-          <input type="radio" id="relevance" name="engine" value="relevance">
-          <label for="relevance">Relevance</label><br>
-          <input type="text" name="query" autofocus>
-          <input type="submit" value="Search">
-        </form>
-        <table>
-            <tr><td><h4>{{ number }} matches for query "{{ query }}":</h4></td></tr>
-            <!--Go through each item in the "matches" variable sent from
+
+<head>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@200;300&display=swap" rel="stylesheet">
+    <meta charset="utf-8">
+    <title>Search engine</title>
+    <style>
+        body {
+            background-color: azure;
+            padding: 25px;
+            font-family: 'Titillium Web'
+        }
+
+        input,
+        label,
+        table {
+            padding: 15px;
+            margin: 10px
+        }
+    </style>
+</head>
+
+
+<body>
+    <h1><b>Welcome to Wikipedia search</b></h1>
+    <h3> Please select your search engine</h3>
+
+    <form>
+        <input type="radio" id="boolean" name="engine" value="boolean">
+        <label for="boolean">Boolean search</label><br>
+        <input type="radio" id="relevance" name="engine" value="relevance">
+        <label for="relevance">Relevance</label><br>
+        <input type="text" name="query" autofocus>
+        <input type="submit" value="Search">
+    </form>
+    <table>
+        <tr>
+            <td>
+                {% if matches %}
+                <h4>{{ number }} articles match your query "{{ query }}":</h4>
+                {% else %}
+                <h4>No results</h4>
+                {% endif %}
+            </td>
+        </tr>
+        <!--Go through each item in the "matches" variable sent from
                 search() function in the Flask app-->
-            {% for item in matches %}
-            <tr>
-                <!--Display the name of the item based on the "name" key-->
-                <td><a href="/{{item['id']}}">{{ item["name"] }}</a></td>
-            </tr>
-            <!--End for loop-->
-            {% endfor %}
-        </table>
-    </body>
+        {% for item in matches %}
+        <tr>
+            <!--Display the name of the item based on the "name" key-->
+            <td><a href="{{url_for('show_document', id=item['id'])}}">{{ item["name"] }}</a></td>
+        </tr>
+        <!--End for loop-->
+        {% endfor %}
+    </table>
+</body>
+<script>
+    function set_engine_choice(engine_choice) {
+        console.log('täällä', engine_choice)
+        if (engine_choice == "relevance") {
+            document.getElementById("relevance").checked = true;
+        } else {
+            document.getElementById("boolean").checked = true;
+        }
+    }
+    set_engine_choice({{ engine_choice| tojson }});
+</script>
+
 </html>
-                               
