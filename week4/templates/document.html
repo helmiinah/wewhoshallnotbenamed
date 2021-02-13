@@ -18,6 +18,10 @@
             background-color: rgb(165, 236, 236);
             border-radius: 4px;
         }
+        .highlight {
+            color:rgb(243, 243, 247);
+            background-color: rgb(2, 41, 63);
+        }
     </style>
 </head>
 
@@ -26,7 +30,25 @@
     <a href="{{url_for('return_to_results') }}">
         <button>Back to results</button></a>
     <h2>{{ name }}</h2>
-    <p>{{ content }}</p>
+    <p>Query: <span class="highlight">{{ query }}</span></p>
+    <p>Number of matches: <b>{{ num_matches }}</b></p>
+    <p>
+    {% for word in content.split() %}
+        {% if '"' in query %}
+            {% if query.strip('""') == word %}
+                <b class="highlight"> {{ word }} </b>
+            {% else %}
+                {{ word }}
+            {% endif %}
+        {% else %}
+            {% if query == word.lower() or query in word.lower() %}
+                <b class="highlight"> {{ word }} </b>
+            {% else %}
+                {{ word }}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    </p>
 </body>
 
 </html>

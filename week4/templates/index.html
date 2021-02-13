@@ -18,42 +18,48 @@
             padding: 15px;
             margin: 10px
         }
+        .content {
+            max-width: 500px;
+            margin: auto;
+        }
     </style>
 </head>
 
 
 <body>
-    <h1><b>Welcome to Wikipedia search</b></h1>
-    <h3> Please select your search engine</h3>
+    <div class="content">
+        <h1><b>Welcome to Wikipedia search</b></h1>
+        <h3> Please select your search engine</h3>
 
-    <form>
-        <input type="radio" id="boolean" name="engine" value="boolean">
-        <label for="boolean">Boolean search</label><br>
-        <input type="radio" id="relevance" name="engine" value="relevance">
-        <label for="relevance">Relevance</label><br>
-        <input type="text" name="query" autofocus>
-        <input type="submit" value="Search">
-    </form>
-    <table>
-        <tr>
-            <td>
-                {% if matches %}
-                <h4>{{ number }} articles match your query "{{ query }}":</h4>
-                {% else %}
-                <h4>No results</h4>
-                {% endif %}
-            </td>
-        </tr>
-        <!--Go through each item in the "matches" variable sent from
-                search() function in the Flask app-->
-        {% for item in matches %}
-        <tr>
-            <!--Display the name of the item based on the "name" key-->
-            <td><a href="{{url_for('show_document', id=item['id'])}}">{{ item["name"] }}</a></td>
-        </tr>
-        <!--End for loop-->
-        {% endfor %}
-    </table>
+        <form>
+            <input type="radio" id="boolean" name="engine" value="boolean">
+            <label for="boolean">Boolean search</label><br>
+            <input type="radio" id="relevance" name="engine" value="relevance">
+            <label for="relevance">Relevance</label><br>
+            <input type="text" name="query" autofocus>
+            <input type="submit" value="Search">
+        </form>
+        <table>
+            <tr>
+                <td>
+                    {% if matches %}
+                    <h4>{{ number }} articles match your query "{{ query }}":</h4>
+                    {% else %}
+                    <h4>No results</h4>
+                    {% endif %}
+                </td>
+            </tr>
+            <!--Go through each item in the "matches" variable sent from
+                    search() function in the Flask app-->
+            {% for item in matches %}
+            <tr>
+                <!--Display the name of the item based on the "name" key-->
+                <td><a href="{{url_for('show_document', id=item['id'], query=query)}}">{{ item["name"] }}</a></td>
+            </tr>
+            <!--End for loop-->
+            {% endfor %}
+        </table>
+    </div>
 </body>
 <script>
     function set_engine_choice(engine_choice) {
