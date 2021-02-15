@@ -113,7 +113,7 @@ def boolean_search(query):
             # print('Results:')
             # print("Matched", len(hits_list), "documents.")
             matches = []
-            for doc_idx in hits_list[:10]:
+            for doc_idx in hits_list:
                 matches.append(
                     {"name": doc_names[doc_idx], "content": documents[doc_idx], "id": doc_idx})
                 # print(
