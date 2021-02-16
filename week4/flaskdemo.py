@@ -58,6 +58,9 @@ def show_document(id):
     query = request.args.get('query')
     query = query.lower()
 
+    engine_choice = request.args.get('engine')
+    print(engine_choice)
+
     docs = engine.documents
     names = engine.doc_names
     idx = int(id)
@@ -65,14 +68,28 @@ def show_document(id):
     # Count word matches inside document
     doc_matches = 0
     for word in docs[idx].split():
-        # Check if query was exact match search
-        if '"' in query:
-            if query.strip('""') == word:
+        if engine_choice == "boolean":
+            query_splitted = query.split()
+
+            if "and" in query_splitted:
+                query_splitted.remove("and")
+            elif "or" in query_splitted:
+                query_splitted.remove("or")
+            elif "not" in query_splitted:
+                query_splitted.remove("not")
+            
+            if word.lower() in query_splitted:
                 doc_matches += 1
-        else:
-            if query == word.lower() or query in word.lower():
-                doc_matches += 1
-    return render_template('document.html', name=names[idx], content=docs[idx], query=query, num_matches=doc_matches)
+                
+        elif engine_choice == "relevance":
+            # Check if query was exact match search
+            if '"' in query:
+                if query.strip('""') == word:
+                    doc_matches += 1
+            else:
+                if query == word.lower() or query in word.lower():
+                    doc_matches += 1
+    return render_template('document.html', name=names[idx], content=docs[idx], query=query, num_matches=doc_matches, engine=engine_choice)
 
 
 @app.route('/search/')

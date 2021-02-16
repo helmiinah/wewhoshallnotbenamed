@@ -54,7 +54,7 @@
             {% for item in matches %}
             <tr>
                 <!--Display the name of the item based on the "name" key-->
-                <td><a href="{{url_for('show_document', id=item['id'], query=query)}}">{{ item["name"] }}</a></td>
+                <td><a href="{{url_for('show_document', id=item['id'], query=query, engine=engine_choice)}}">{{ item["name"] }}</a></td>
             </tr>
             <!--End for loop-->
             {% endfor %}

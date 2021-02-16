@@ -34,17 +34,25 @@
     <p>Number of matches: <b>{{ num_matches }}</b></p>
     <p>
     {% for word in content.split() %}
-        {% if '"' in query %}
-            {% if query.strip('""') == word %}
-                <b class="highlight"> {{ word }} </b>
+        {% if engine == "boolean" %}
+            {% if word.lower() in query.split() and word.lower() != "and" and  word.lower() != "or" and word.lower() != "not"%}
+                <b class="highlight">{{ word }}</b>
             {% else %}
                 {{ word }}
             {% endif %}
-        {% else %}
-            {% if query == word.lower() or query in word.lower() %}
-                <b class="highlight"> {{ word }} </b>
+        {% elif engine == "relevance" %}
+            {% if '"' in query %}
+                {% if query.strip('""') == word %}
+                    <b class="highlight"> {{ word }} </b>
+                {% else %}
+                    {{ word }}
+                {% endif %}
             {% else %}
-                {{ word }}
+                {% if query == word.lower() or query in word.lower() %}
+                    <b class="highlight"> {{ word }} </b>
+                {% else %}
+                    {{ word }}
+                {% endif %}
             {% endif %}
         {% endif %}
     {% endfor %}
