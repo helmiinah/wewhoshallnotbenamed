@@ -22,9 +22,33 @@
             max-width: 500px;
             margin: auto;
         }
+
+        .button {
+            padding: 5px;
+            background-color: white;
+            transition-duration: 0.2s;
+            border: 1px solid black
+        }
+
+        .round_button {
+            border-radius: 50%;
+            }
+
+        .round_button:hover {
+             background-color: #E8E8E8;}
+
+        #tooltip_box {
+            font-size: 12px;
+            background-color: #E8E8E8;
+            border: 1px solid black;
+            border-radius: 10px;
+            padding: 5px;
+            width: 200px;
+            display: inline-block;
+            float: right;
+        }
     </style>
 </head>
-
 
 <body>
     <div class="content">
@@ -38,7 +62,24 @@
             <label for="relevance">Relevance</label><br>
             <input type="text" name="query" autofocus>
             <input type="submit" value="Search">
+            <button type="button" class="button round_button" title="Help" onclick="myFunction()">?</button>
+            <div id="tooltip_box" style="float:right; display:none;">
+                <h4>Boolean Search</h4>
+                <ul>
+                    <li>Searches for exact matches of search terms.</li>
+                    <li>Use logical operators AND, OR and NOT to do combined queries.</li>
+                </ul>
+
+
+                <h4>Relevance Search</h4>
+                <ul>
+                    <li>Use plain search terms to match words based on word stems.</li>
+                    <li>Use quotation marks around search terms to search for exact matches."</li>
+                    <li>Use an asterisk (*) for wildcard queries (e.g. "*ing" matches words ending with "ing")</li>
+                </ul>
+            </div>
         </form>
+
         <table>
             <tr>
                 <td>
@@ -61,6 +102,7 @@
         </table>
     </div>
 </body>
+
 <script>
     function set_engine_choice(engine_choice) {
         console.log('täällä', engine_choice)
@@ -71,6 +113,17 @@
         }
     }
     set_engine_choice({{ engine_choice| tojson }});
+</script>
+
+<script>
+    function myFunction() {
+        var x = document.getElementById("tooltip_box");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+    }
 </script>
 
 </html>
