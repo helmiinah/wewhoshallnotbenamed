@@ -32,10 +32,11 @@
 
         .round_button {
             border-radius: 50%;
-            }
+        }
 
         .round_button:hover {
-             background-color: #E8E8E8;}
+             background-color: #E8E8E8;
+        }
 
         #tooltip_box {
             font-size: 12px;
@@ -62,7 +63,7 @@
             <label for="relevance">Relevance</label><br>
             <input type="text" name="query" autofocus>
             <input type="submit" value="Search">
-            <button type="button" class="button round_button" title="Help" onclick="myFunction()">?</button>
+            <button type="button" class="button round_button" title="Help" onclick="showTooltip()">?</button>
             <div id="tooltip_box" style="float:right; display:none;">
                 <h4>Boolean Search</h4>
                 <ul>
@@ -74,7 +75,7 @@
                 <h4>Relevance Search</h4>
                 <ul>
                     <li>Use plain search terms to match words based on word stems.</li>
-                    <li>Use quotation marks around search terms to search for exact matches."</li>
+                    <li>Use quotation marks around search terms to search for exact matches.</li>
                     <li>Use an asterisk (*) for wildcard queries (e.g. "*ing" matches words ending with "ing")</li>
                 </ul>
             </div>
@@ -116,7 +117,7 @@
 </script>
 
 <script>
-    function myFunction() {
+    function showTooltip() {
         var x = document.getElementById("tooltip_box");
         if (x.style.display === "none") {
             x.style.display = "block";
