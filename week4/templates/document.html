@@ -43,7 +43,7 @@
     <a href="{{url_for('return_to_results') }}">
         <button>Back to results</button></a>
     <button id="btn" onclick="imageShow()">Show theme plot</button>
-    <img id="plot" src="/static/plot.png" style="display:none; margin: auto;"/>
+    <img id="plot" src="{{ url_for('static', filename=idx+'_plt.png') }}" style="display:none; margin: auto;"/>
     <h2>{{ name }}</h2>
     <p>Query: <span class="highlight">{{ query }}</span></p>
     <p>Number of matches: <b>{{ num_matches }}</b></p>
