@@ -1,9 +1,14 @@
 from flask import Flask, render_template, request, url_for, redirect
 import search_engine as engine
+import matplotlib.pyplot as plt
+import pke
+import matplotlib
 
 # Initialize Flask instance
 app = Flask(__name__)
 engine.initialize()
+
+matplotlib.use('Agg')
 
 example_data = [
     {'name': 'Cat sleeping on a bed', 'source': 'cat.jpg'},
@@ -53,13 +58,20 @@ def search():
     return render_template('index.html', matches=matches, number=len(matches), query=query, engine_choice=engine_choice)
 
 
+def generate_plot(document, query):
+    fig = plt.figure()
+    plt.title('This is the title') # add a title 
+    plt.xlabel('label for x-axis') # name the x-axis
+    plt.ylabel('label for y-axis') # name of the y-axis
+    plt.savefig('static/plot.png')
+
+
 @app.route('/search/<id>')
 def show_document(id):
     query = request.args.get('query')
     query = query.lower()
 
     engine_choice = request.args.get('engine')
-    print(engine_choice)
 
     docs = engine.documents
     names = engine.doc_names
@@ -89,6 +101,9 @@ def show_document(id):
             else:
                 if query == word.lower() or query in word.lower():
                     doc_matches += 1
+
+    generate_plot(docs[idx], query) 
+
     return render_template('document.html', name=names[idx], content=docs[idx], query=query, num_matches=doc_matches, engine=engine_choice)
 
 
