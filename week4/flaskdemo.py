@@ -5,6 +5,7 @@ import spacy
 import pke
 import matplotlib
 import en_core_web_sm
+import os
 
 
 # Initialize Flask instance
@@ -61,7 +62,7 @@ def search():
     return render_template('index.html', matches=matches, number=len(matches), query=query, engine_choice=engine_choice)
 
 
-def generate_plot(idx, document):
+def generate_plot(idx, document, name):
     extractor = pke.unsupervised.TopicRank()
     extractor.load_document(input=document, language='en')
     extractor.candidate_selection()
@@ -70,11 +71,16 @@ def generate_plot(idx, document):
     phrases = [p[0] for p in keyphrases]
     scores = [p[1] for p in keyphrases]
     plt.figure()
-    plt.title('Themes') # add a title 
+    plt.title(f'Themes in "{name}"') # add a title 
     plt.xlabel('Keyphrases') # name the x-axis
     plt.ylabel('Scores') # name of the y-axis
+    ax = plt.gca()
+    plt.setp(ax.get_xticklabels(), rotation=30, horizontalalignment='right')
     plt.plot(phrases, scores)
-    plt.savefig('static/' + str(idx) + '_plt.png')
+    plt.tight_layout()
+    plot_path = 'static/' + str(idx) + '_plt.png'
+    plt.savefig(plot_path)
+    plt.close()
 
 
 @app.route('/search/<id>')
@@ -113,7 +119,7 @@ def show_document(id):
                 if query == word.lower() or query in word.lower():
                     doc_matches += 1
 
-    generate_plot(idx, docs[idx]) 
+    generate_plot(idx, docs[idx], names[idx]) 
 
     return render_template('document.html', idx=str(idx), name=names[idx], content=docs[idx], query=query, num_matches=doc_matches, engine=engine_choice)
 
