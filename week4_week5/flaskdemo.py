@@ -132,7 +132,7 @@ def show_document(id):
         elif engine_choice == "relevance":
             # Check if query was exact match search
             if '"' in query:
-                if query.strip('""') == word:
+                if query.strip('""') == word.lower():
                     doc_matches += 1
             else:
                 if query == word.lower() or query in word.lower():
