@@ -13,8 +13,8 @@ d = {"and": "&", "AND": "&",
      "(": "(", ")": ")"}
 
 reviews = pd.DataFrame()
-wine_descriptions = pd.Series()
-wine_names = pd.Series()
+wine_descriptions = pd.Series([],dtype=pd.StringDtype())
+wine_names = pd.Series([],dtype=pd.StringDtype())
 terms = []
 sparse_td_matrix = []
 t2i = []
@@ -42,8 +42,12 @@ def initialize():
     global gv_stem
     global g_matrix_stem
 
-    # Reviews with all columns as a Pandas DataFrame:
-    reviews = pd.read_csv("./data/10k-winemag-reviews.csv", sep=",")
+    # Reviews with all columns as a Pandas DataFrame (first column is omitted, because Pandas creates an index
+    # column automatically):
+    reviews = pd.read_csv("./data/10k-winemag-reviews.csv", sep=",", usecols=range(1, 14))
+
+    # Print and inspect interesting columns (for fun)
+    print(reviews[['country', 'description', 'points', 'price', 'title', 'variety']].head().to_string())
 
     # NOTE: storing to individual series' is NOT necessary, this was done for fast testing purposes
     # Store wine names to a series:
@@ -107,13 +111,13 @@ def boolean_search(query):
             hits_matrix = eval(rewrite_query(query))
             hits_list = list(hits_matrix.nonzero()[1])
             print('Results:')
-            print("Matched", len(hits_list), "documents.")
+            print("Matched", len(hits_list), "wines.")
             matches = []
             for doc_idx in hits_list:
                 matches.append(
                     {"name": wine_names[doc_idx], "content": wine_descriptions[doc_idx], "id": doc_idx})
                 print(
-                   f"Matching doc: [{doc_idx}] {wine_descriptions[doc_idx][:50]}...")
+                   f"Matching wine: [{doc_idx}] {wine_descriptions[doc_idx][:50]}...")
             return matches
     except:
         print('Bad query, could not perform a search.')
@@ -211,7 +215,7 @@ def relevance_search(query_string):
             exact_query_vec = match_exact(exact_query)
 
             # Output result
-            print("Your query '{:s}' matches the following documents:".format(
+            print("Your query '{:s}' matches the following wines:".format(
                 query_string))
 
             # Check if word was found in stem search
@@ -226,8 +230,8 @@ def relevance_search(query_string):
                 for i, (score, doc_idx) in enumerate(stem_rank_hits):
                     matches.append(
                         {"name": wine_names[doc_idx], "content": wine_descriptions[doc_idx], "id": doc_idx})
-                    print("Doc #{:d} (score: {:.4f}): {:s}...".format(
-                        i, score, wine_descriptions[doc_idx][:50]))
+                    print("Wine #{:d} (score: {:.4f}): {:s}...".format(
+                        doc_idx, score, wine_descriptions[doc_idx][:50]))
                 return matches
 
             # Check if word was found in exact search
@@ -242,8 +246,8 @@ def relevance_search(query_string):
                 for i, (score, doc_idx) in enumerate(exact_rank_hits):
                     matches.append(
                         {"name": wine_names[doc_idx], "content": wine_descriptions[doc_idx], "id": doc_idx})
-                    print("Doc #{:d} (score: {:.4f}): {:s}...".format(
-                        i, score, wine_descriptions[doc_idx][:50]))
+                    print("Wine #{:d} (score: {:.4f}): {:s}...".format(
+                        doc_idx, score, wine_descriptions[doc_idx][:50]))
                 return matches
 
         else:
@@ -258,14 +262,14 @@ def relevance_search(query_string):
                 rank_hits = ranked_scores_and_doc_ids(hits)
 
                 # Output result
-                print("Your query '{:s}' matches the following documents:".format(
+                print("Your query '{:s}' matches the following wines:".format(
                     query_string))
 
                 for i, (score, doc_idx) in enumerate(rank_hits):
                     matches.append(
                         {"name": wine_names[doc_idx], "content": wine_descriptions[doc_idx], "id": doc_idx})
-                    print("Doc #{:d} (score: {:.4f}): {:s}...".format(
-                        i, score, wine_descriptions[doc_idx][:50]))
+                    print("Wine #{:d} (score: {:.4f}): {:s}...".format(
+                        doc_idx, score, wine_descriptions[doc_idx][:50]))
                 return matches
 
     elif "*" in query_string:
@@ -279,19 +283,19 @@ def relevance_search(query_string):
 
         # Output result
         if query_vec is not None:
-            print("Your query '{:s}' matches the following documents:".format(
+            print("Your query '{:s}' matches the following wines:".format(
                 query_string))
             for i, (score, doc_idx) in enumerate(rank_hits):
                 matches.append(
                     {"name": wine_names[doc_idx], "content": wine_descriptions[doc_idx], "id": doc_idx})
-                print("Doc #{:d} (score: {:.4f}): {:s}...".format(
-                    i, score, wine_descriptions[doc_idx][:50]))
+                print("Wine #{:d} (score: {:.4f}): {:s}...".format(
+                    doc_idx, score, wine_descriptions[doc_idx][:50]))
             return matches
 
     else:  # stemming can be used
         query_vec = match_stems(words)
         # Output result
-        print("Your query '{:s}' matches the following documents:".format(
+        print("Your query '{:s}' matches the following wines:".format(
             query_string))
         if query_vec is not None:
             # Cosine similarity
@@ -302,8 +306,8 @@ def relevance_search(query_string):
             for i, (score, doc_idx) in enumerate(rank_hits):
                 matches.append(
                     {"name": wine_names[doc_idx], "content": wine_descriptions[doc_idx], "id": doc_idx})
-                print("Doc #{:d} (score: {:.4f}): {:s}...".format(
-                    i, score, wine_descriptions[doc_idx][:50]))
+                print("Wine #{:d} (score: {:.4f}): {:s}...".format(
+                    doc_idx, score, wine_descriptions[doc_idx][:50]))
             return matches
 
     return matches
