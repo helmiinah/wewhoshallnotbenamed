@@ -6,6 +6,7 @@ import pke
 import matplotlib
 import en_core_web_sm
 import os
+from wordcloud import WordCloud
 
 
 # Initialize Flask instance
@@ -83,6 +84,24 @@ def generate_plot(idx, document, name):
     plt.close()
 
 
+def generate_wordcloud(idx, document):
+    extractor = pke.unsupervised.TopicRank()
+    extractor.load_document(input=document, language='en')
+    extractor.candidate_selection()
+    extractor.candidate_weighting()
+    keyphrases = dict(extractor.get_n_best(n=30))
+    wordcloud = WordCloud(width=800, height=800,
+                          background_color='white',
+                          min_font_size=10).generate_from_frequencies(keyphrases)
+    plt.figure()
+    plt.imshow(wordcloud)
+    plt.axis("off")
+    plt.tight_layout(pad=0)
+    plot_path = 'static/' + str(idx) + '_wordcloud.png'
+    plt.savefig(plot_path)
+    plt.close()
+
+
 @app.route('/search/<id>')
 def show_document(id):
     query = request.args.get('query')
@@ -119,7 +138,8 @@ def show_document(id):
                 if query == word.lower() or query in word.lower():
                     doc_matches += 1
 
-    generate_plot(idx, docs[idx], names[idx]) 
+    generate_plot(idx, docs[idx], names[idx])
+    generate_wordcloud(idx, docs[idx])
 
     return render_template('document.html', idx=str(idx), name=names[idx], content=docs[idx], query=query, num_matches=doc_matches, engine=engine_choice)
 

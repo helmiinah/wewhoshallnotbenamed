@@ -27,8 +27,17 @@
         // function imageShow(){
         //     document.getElementById('plot').style.display = "block";       
         // }
-        function imageShow() {
+        function showPlot() {
             var x = document.getElementById("plot");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+
+        function showWordcloud() {
+            var x = document.getElementById("wordcloud");
             if (x.style.display === "none") {
                 x.style.display = "block";
             } else {
@@ -42,8 +51,10 @@
 
     <a href="{{url_for('return_to_results') }}">
         <button>Back to results</button></a>
-    <button id="btn" onclick="imageShow()">Show theme plot</button>
+    <button id="btn" onclick="showPlot()">Show theme plot</button>
     <img id="plot" src="{{ url_for('static', filename=idx+'_plt.png') }}" style="display:none; margin: auto;"/>
+    <button onclick="showWordcloud()">Show theme cloud</button>
+    <img id="wordcloud" src="{{ url_for('static', filename=idx+'_wordcloud.png') }}" style="display:none; margin: auto;"/>
     <h2>{{ name }}</h2>
     <p>Query: <span class="highlight">{{ query }}</span></p>
     <p>Number of matches: <b>{{ num_matches }}</b></p>
