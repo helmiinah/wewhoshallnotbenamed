@@ -109,8 +109,8 @@ def show_document(id):
 
     engine_choice = request.args.get('engine')
 
-    docs = engine.documents
-    names = engine.doc_names
+    docs = engine.reviews['description'].tolist()
+    names = engine.reviews['title'].tolist()
     idx = int(id)
 
     # Count word matches inside document
@@ -141,7 +141,7 @@ def show_document(id):
     generate_plot(idx, docs[idx], names[idx])
     generate_wordcloud(idx, docs[idx])
 
-    return render_template('document.html', idx=str(idx), name=names[idx], content=docs[idx], query=query,
+    return render_template('wine.html', idx=str(idx), name=names[idx], content=docs[idx], query=query,
                            num_matches=doc_matches, engine=engine_choice)
 
 

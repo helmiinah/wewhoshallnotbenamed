@@ -13,8 +13,6 @@ d = {"and": "&", "AND": "&",
      "(": "(", ")": ")"}
 
 reviews = pd.DataFrame()
-wine_descriptions = pd.Series([],dtype=pd.StringDtype())
-wine_names = pd.Series([],dtype=pd.StringDtype())
 terms = []
 sparse_td_matrix = []
 t2i = []
@@ -34,8 +32,6 @@ def tokenize(text):
 def initialize():
     # to save changes globally
     global reviews
-    global wine_names
-    global wine_descriptions
     global terms
     global sparse_td_matrix
     global t2i
@@ -44,19 +40,12 @@ def initialize():
 
     # Reviews with all columns as a Pandas DataFrame (first column is omitted, because Pandas creates an index
     # column automatically):
-    reviews = pd.read_csv("./data/10k-winemag-reviews.csv", sep=",", usecols=range(1, 14))
-
-    # NOTE: storing to individual series' is NOT necessary, this was done for fast testing purposes
-    # Store wine names to a series:
-    wine_names = reviews['title']
-
-    # Store descriptions to a series
-    wine_descriptions = reviews['description']
+    reviews = pd.read_csv("./static/10k-winemag-reviews.csv", sep=",", usecols=range(1, 14))
 
     # initialize boolean search tools
     cv = CountVectorizer(lowercase=True, binary=True,
                          token_pattern=r"(?u)\b\w+\b")
-    sparse_matrix = cv.fit_transform(wine_descriptions.tolist())
+    sparse_matrix = cv.fit_transform(reviews['description'].tolist())
     dense_matrix = sparse_matrix.todense()
     td_matrix = dense_matrix.T
     terms = cv.get_feature_names()
@@ -66,7 +55,7 @@ def initialize():
     # initialize relevance search tools for stemming
     gv_stem = TfidfVectorizer(tokenizer=tokenize, lowercase=True,
                               sublinear_tf=True, use_idf=True, norm="l2")
-    g_matrix_stem = gv_stem.fit_transform(wine_descriptions.tolist()).T.tocsr()
+    g_matrix_stem = gv_stem.fit_transform(reviews['description'].tolist()).T.tocsr()
 
 
 def init_exact_search(n):
@@ -76,7 +65,7 @@ def init_exact_search(n):
     global g_matrix
     gv = TfidfVectorizer(lowercase=True,
                          sublinear_tf=True, use_idf=True, norm="l2", ngram_range=(n, n))
-    g_matrix = gv.fit_transform(wine_descriptions.tolist()).T.tocsr()
+    g_matrix = gv.fit_transform(reviews['description'].tolist()).T.tocsr()
     return gv, g_matrix
 
 
@@ -112,9 +101,11 @@ def boolean_search(query):
             matches = []
             for doc_idx in hits_list:
                 matches.append(
-                    {"name": wine_names[doc_idx], "content": wine_descriptions[doc_idx], "id": doc_idx})
-                print(
-                   f"Matching wine: [{doc_idx}] {wine_descriptions[doc_idx][:50]}...")
+                    {"name": reviews.iloc[doc_idx]['title'], "content": reviews.iloc[doc_idx]['description'], "id": doc_idx, 
+                     "variety": reviews.iloc[doc_idx]['variety'], "points": reviews.iloc[doc_idx]['points'], "country": reviews.iloc[doc_idx]['country'],
+                     "winery": reviews.iloc[doc_idx]['winery']})
+                # print(
+                #   f"Matching wine: [{doc_idx}] {wine_descriptions[doc_idx][:50]}...")
             return matches
     except:
         print('Bad query, could not perform a search.')
@@ -226,9 +217,11 @@ def relevance_search(query_string):
                 print("Stemmed search term results: ")
                 for i, (score, doc_idx) in enumerate(stem_rank_hits):
                     matches.append(
-                        {"name": wine_names[doc_idx], "content": wine_descriptions[doc_idx], "id": doc_idx})
-                    print("Wine #{:d} (score: {:.4f}): {:s}...".format(
-                        doc_idx, score, wine_descriptions[doc_idx][:50]))
+                        {"name": reviews.iloc[doc_idx]['title'], "content": reviews.iloc[doc_idx]['description'], "id": doc_idx, 
+                         "variety": reviews.iloc[doc_idx]['variety'], "points": reviews.iloc[doc_idx]['points'], "country": reviews.iloc[doc_idx]['country'],
+                         "winery": reviews.iloc[doc_idx]['winery']})
+                    # print("Wine #{:d} (score: {:.4f}): {:s}...".format(
+                    #    doc_idx, score, wine_descriptions[doc_idx][:50]))
                 return matches
 
             # Check if word was found in exact search
@@ -242,9 +235,11 @@ def relevance_search(query_string):
                 print("Exact seach term results: ")
                 for i, (score, doc_idx) in enumerate(exact_rank_hits):
                     matches.append(
-                        {"name": wine_names[doc_idx], "content": wine_descriptions[doc_idx], "id": doc_idx})
-                    print("Wine #{:d} (score: {:.4f}): {:s}...".format(
-                        doc_idx, score, wine_descriptions[doc_idx][:50]))
+                        {"name": reviews.iloc[doc_idx]['title'], "content": reviews.iloc[doc_idx]['description'], "id": doc_idx, 
+                         "variety": reviews.iloc[doc_idx]['variety'], "points": reviews.iloc[doc_idx]['points'], "country": reviews.iloc[doc_idx]['country'],
+                         "winery": reviews.iloc[doc_idx]['winery']})
+                    # print("Wine #{:d} (score: {:.4f}): {:s}...".format(
+                    #    doc_idx, score, wine_descriptions[doc_idx][:50]))
                 return matches
 
         else:
@@ -264,9 +259,11 @@ def relevance_search(query_string):
 
                 for i, (score, doc_idx) in enumerate(rank_hits):
                     matches.append(
-                        {"name": wine_names[doc_idx], "content": wine_descriptions[doc_idx], "id": doc_idx})
-                    print("Wine #{:d} (score: {:.4f}): {:s}...".format(
-                        doc_idx, score, wine_descriptions[doc_idx][:50]))
+                        {"name": reviews.iloc[doc_idx]['title'], "content": reviews.iloc[doc_idx]['description'], "id": doc_idx, 
+                         "variety": reviews.iloc[doc_idx]['variety'], "points": reviews.iloc[doc_idx]['points'], "country": reviews.iloc[doc_idx]['country'],
+                         "winery": reviews.iloc[doc_idx]['winery']})
+                    # print("Wine #{:d} (score: {:.4f}): {:s}...".format(
+                    #    doc_idx, score, wine_descriptions[doc_idx][:50]))
                 return matches
 
     elif "*" in query_string:
@@ -284,9 +281,11 @@ def relevance_search(query_string):
                 query_string))
             for i, (score, doc_idx) in enumerate(rank_hits):
                 matches.append(
-                    {"name": wine_names[doc_idx], "content": wine_descriptions[doc_idx], "id": doc_idx})
-                print("Wine #{:d} (score: {:.4f}): {:s}...".format(
-                    doc_idx, score, wine_descriptions[doc_idx][:50]))
+                    {"name": reviews.iloc[doc_idx]['title'], "content": reviews.iloc[doc_idx]['description'], "id": doc_idx, 
+                     "variety": reviews.iloc[doc_idx]['variety'], "points": reviews.iloc[doc_idx]['points'], "country": reviews.iloc[doc_idx]['country'],
+                     "winery": reviews.iloc[doc_idx]['winery']})
+                # print("Wine #{:d} (score: {:.4f}): {:s}...".format(
+                #    doc_idx, score, wine_descriptions[doc_idx][:50]))
             return matches
 
     else:  # stemming can be used
@@ -302,9 +301,11 @@ def relevance_search(query_string):
             rank_hits = ranked_scores_and_doc_ids(hits)
             for i, (score, doc_idx) in enumerate(rank_hits):
                 matches.append(
-                    {"name": wine_names[doc_idx], "content": wine_descriptions[doc_idx], "id": doc_idx})
-                print("Wine #{:d} (score: {:.4f}): {:s}...".format(
-                    doc_idx, score, wine_descriptions[doc_idx][:50]))
+                    {"name": reviews.iloc[doc_idx]['title'], "content": reviews.iloc[doc_idx]['description'], "id": doc_idx, 
+                     "variety": reviews.iloc[doc_idx]['variety'], "points": reviews.iloc[doc_idx]['points'], "country": reviews.iloc[doc_idx]['country'],
+                     "winery": reviews.iloc[doc_idx]['winery']})
+                # print("Wine #{:d} (score: {:.4f}): {:s}...".format(
+                #    doc_idx, score, wine_descriptions[doc_idx][:50]))
             return matches
 
     return matches

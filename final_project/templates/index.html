@@ -1,0 +1,133 @@
+<html>
+
+<head>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@200;300&display=swap" rel="stylesheet">
+    <meta charset="utf-8">
+    <title>Search engine</title>
+    <style>
+        body {
+            background-color: azure;
+            padding: 25px;
+            font-family: 'Titillium Web';
+        }
+
+        input,
+        label,
+        table {
+            padding: 15px;
+            margin: 10px
+        }
+        .content {
+            max-width: 500px;
+            margin: auto;
+            border: 2px solid rgb(72, 179, 187);
+            border-radius: 5px;
+            padding: 25px 25px;
+            background-color:rgb(180, 232, 241)
+        }
+
+        .button {
+            padding: 5px;
+            background-color: white;
+            transition-duration: 0.2s;
+            border: 1px solid black
+        }
+
+        .round_button {
+            border-radius: 50%;
+        }
+
+        .round_button:hover {
+             background-color: #E8E8E8;
+        }
+
+        #tooltip_box {
+            font-size: 12px;
+            background-color: #E8E8E8;
+            border: 1px solid black;
+            border-radius: 10px;
+            padding: 5px;
+            width: 200px;
+            display: inline-block;
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <h1><b>Welcome to Wine search</b></h1>
+        <h3> Please select your search engine</h3>
+
+        <form>
+            <input type="radio" id="boolean" name="engine" value="boolean">
+            <label for="boolean">Boolean search</label><br>
+            <input type="radio" id="relevance" name="engine" value="relevance">
+            <label for="relevance">Relevance</label><br>
+            <input type="text" name="query" autofocus>
+            <input type="submit" value="Search">
+            <button type="button" class="button round_button" title="Help" onclick="showTooltip()">?</button>
+            <div id="tooltip_box" style="float:right; display:none;">
+                <h4>Boolean Search</h4>
+                <ul>
+                    <li>Searches for exact matches of search terms.</li>
+                    <li>Use logical operators AND, OR and NOT to do combined queries.</li>
+                </ul>
+
+
+                <h4>Relevance Search</h4>
+                <ul>
+                    <li>Use plain search terms to match words based on word stems.</li>
+                    <li>Use quotation marks around search terms to search for exact matches.</li>
+                    <li>Use an asterisk (*) for wildcard queries (e.g. "*ing" matches words ending with "ing")</li>
+                </ul>
+            </div>
+        </form>
+
+        <table>
+            <tr>
+                <td>
+                    {% if matches %}
+                    <h4>{{ number }} wines match your query "{{ query }}":</h4>
+                    {% else %}
+                    <h4>No results</h4>
+                    {% endif %}
+                </td>
+            </tr>
+            <!--Go through each item in the "matches" variable sent from
+                    search() function in the Flask app-->
+            {% for item in matches %}
+            <tr>
+                <!--Display the name of the item based on the "name" key-->
+                <td><a href="{{url_for('show_document', id=item['id'], query=query, engine=engine_choice)}}">{{ item["name"] }}</a></td>
+            </tr>
+            <!--End for loop-->
+            {% endfor %}
+        </table>
+    </div>
+</body>
+
+<script>
+    function set_engine_choice(engine_choice) {
+        if (engine_choice == "relevance") {
+            document.getElementById("relevance").checked = true;
+        } else {
+            document.getElementById("boolean").checked = true;
+        }
+    }
+    set_engine_choice({{ engine_choice| tojson }});
+</script>
+
+<script>
+    function showTooltip() {
+        var x = document.getElementById("tooltip_box");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+    }
+</script>
+
+</html>
