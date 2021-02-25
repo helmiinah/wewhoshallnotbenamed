@@ -13,6 +13,7 @@ d = {"and": "&", "AND": "&",
      "(": "(", ")": ")"}
 
 reviews = pd.DataFrame()
+country_codes = {}
 terms = []
 sparse_td_matrix = []
 t2i = []
@@ -32,6 +33,7 @@ def tokenize(text):
 def initialize():
     # to save changes globally
     global reviews
+    global country_codes
     global terms
     global sparse_td_matrix
     global t2i
@@ -41,6 +43,14 @@ def initialize():
     # Reviews with all columns as a Pandas DataFrame (first column is omitted, because Pandas creates an index
     # column automatically):
     reviews = pd.read_csv("./static/10k-winemag-reviews.csv", sep=",", usecols=range(1, 14))
+    reviews = reviews.fillna("Unknown")
+
+    country_codes = {"Luxembourg": "lu", "Spain": "es", "Australia": "au", "South Africa": "za", "Czech Republic": "cz", "Slovenia": "si", 
+                     "France": "fr", "Moldova": "md", "Serbia": "rs", "Argentina": "ar", "Mexico": "mx", "Croatia": "hr", "England": "gb", "Germany": "de", 
+                     "Georgia": "ge", "Lebanon": "lb", "Chile": "cl", "Canada": "ca", "Morocco": "ma", "Uruguay": "uy", "Cyprus": "cy", "New Zealand": "nz", 
+                     "Turkey": "tr", "Greece": "gr", "Romania": "ro", "Brazil": "br", "Portugal": "pt", "Bulgaria": "bg", "Austria": "at", "Hungary": "hu", 
+                     "Italy": "it", "Armenia": "am", "Peru": "pe", "India": "in", "US": "us", "Israel": "il", "Unknown": "Unknown"}
+
 
     # initialize boolean search tools
     cv = CountVectorizer(lowercase=True, binary=True,

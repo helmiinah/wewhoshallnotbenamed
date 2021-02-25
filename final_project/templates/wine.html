@@ -28,7 +28,7 @@
             color:rgb(243, 243, 247);
             background-color: rgb(2, 41, 63);
         }
-        img {
+        .figure {
           border: 5px solid rgb(72, 179, 187);
           border-radius: 5px;
         }
@@ -70,13 +70,14 @@
     <button id="btn" onclick="showPlot()">Show theme plot</button>
     <button onclick="showWordcloud()">Show theme cloud</button>
     <div class="flex-container">
-      <img id="plot" src="{{ url_for('static', filename=idx+'_plt.png') }}" style="display:none; margin: auto;"/>
-      <img id="wordcloud" src="{{ url_for('static', filename=idx+'_wordcloud.png') }}" style="display:none; margin: auto;"/>
+      <img class="figure" id="plot" src="{{ url_for('static', filename=idx+'_plt.png') }}" style="display:none; margin: auto;"/>
+      <img class="figure" id="wordcloud" src="{{ url_for('static', filename=idx+'_wordcloud.png') }}" style="display:none; margin: auto;"/>
     </div>
     <h2>{{ wine["title"] }}</h2>
     <p>Query: <span class="highlight">{{ query }}</span></p>
     <p>Number of matches: <b>{{ num_matches }}</b></p>
-    <h4>Description:</h4>
+    <h3>Description:</h3>
+    <p><b>Variety:</b> {{ wine["variety"] }}</p>
     <p>
     {% for word in wine["description"].split() %}
         {% if engine == "boolean" %}
@@ -103,7 +104,23 @@
     {% endfor %}
     </p>
 
-    <p><b>Origin Country:</b> {{ wine["country"]}}</p>
+    <h3>Origin:</h3>
+    <table>
+        <tr>
+            {% if wine["country"] != "Unknown" %}
+            <td>
+                <img src="https://www.countryflags.io/{{ flag }}/flat/48.png"> 
+            </td>
+            <td>
+                {{ wine["country"]}}, the '{{ wine["winery"] }}' winery
+            </td>
+            {% else %}
+            <td>
+                Unknown country, the '{{ wine["winery"] }}' winery
+            </td>
+            {% endif %}
+        </tr>
+    </table>
   </div>
 </body>
 

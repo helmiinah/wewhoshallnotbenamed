@@ -14,14 +14,6 @@ engine.initialize()
 
 matplotlib.use('Agg')
 
-example_data = [
-    {'name': 'Cat sleeping on a bed', 'source': 'cat.jpg'},
-    {'name': 'Misty forest', 'source': 'forest.jpg'},
-    {'name': 'Bonfire burning', 'source': 'fire.jpg'},
-    {'name': 'Old library', 'source': 'library.jpg'},
-    {'name': 'Sliced orange', 'source': 'orange.jpg'}
-]
-
 # These globals exist to allow saving previous query and matches and such,
 # so that after opening a document, the user can return to the original result list
 engine_choice = 'boolean'
@@ -111,6 +103,7 @@ def show_document(id):
 
     idx = int(id)
     wine = engine.reviews.iloc[idx]
+    country_codes = engine.country_codes
 
     # Count word matches inside document
     doc_matches = 0
@@ -140,7 +133,7 @@ def show_document(id):
     generate_plot(idx, wine["description"], wine["title"])
     generate_wordcloud(idx, wine["description"])
 
-    return render_template('wine.html', idx=str(idx), query=query,
+    return render_template('wine.html', idx=str(idx), query=query, flag=country_codes[wine['country']],
                            num_matches=doc_matches, engine=engine_choice, wine=wine)
 
 
