@@ -8,7 +8,6 @@ import en_core_web_sm
 import os
 from wordcloud import WordCloud
 
-
 # Initialize Flask instance
 app = Flask(__name__)
 engine.initialize()
@@ -39,7 +38,8 @@ def search():
 
     if back_to_list:  # We return from a document and wish to see previous results
         back_to_list = False
-        return render_template('index.html', matches=previous_matches, number=len(previous_matches), query=previous_query, engine_choice=engine_choice)
+        return render_template('index.html', matches=previous_matches, number=len(previous_matches),
+                               query=previous_query, engine_choice=engine_choice)
 
     # Get query from URL variable
     query = request.args.get('query')
@@ -72,9 +72,9 @@ def generate_plot(idx, document, name):
     phrases = [p[0] for p in keyphrases]
     scores = [p[1] for p in keyphrases]
     plt.figure()
-    plt.title(f'Themes in "{name}"') # add a title 
-    plt.xlabel('Keyphrases') # name the x-axis
-    plt.ylabel('Scores') # name of the y-axis
+    plt.title(f'Themes in "{name}"')  # add a title
+    plt.xlabel('Keyphrases')  # name the x-axis
+    plt.ylabel('Scores')  # name of the y-axis
     ax = plt.gca()
     plt.setp(ax.get_xticklabels(), rotation=30, horizontalalignment='right')
     plt.plot(phrases, scores)
@@ -125,14 +125,14 @@ def show_document(id):
                 query_splitted.remove("or")
             elif "not" in query_splitted:
                 query_splitted.remove("not")
-            
+
             if word.lower() in query_splitted:
                 doc_matches += 1
-                
+
         elif engine_choice == "relevance":
             # Check if query was exact match search
             if '"' in query:
-                if query.strip('""') == word:
+                if query.strip('""') == word.lower():
                     doc_matches += 1
             else:
                 if query == word.lower() or query in word.lower():
@@ -141,7 +141,8 @@ def show_document(id):
     generate_plot(idx, docs[idx], names[idx])
     generate_wordcloud(idx, docs[idx])
 
-    return render_template('document.html', idx=str(idx), name=names[idx], content=docs[idx], query=query, num_matches=doc_matches, engine=engine_choice)
+    return render_template('document.html', idx=str(idx), name=names[idx], content=docs[idx], query=query,
+                           num_matches=doc_matches, engine=engine_choice)
 
 
 @app.route('/search/')
