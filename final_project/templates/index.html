@@ -52,13 +52,66 @@
             display: inline-block;
             float: right;
         }
+        #banner {
+            background: rgba(0, 0, 0, 0);
+            overflow: hidden;
+            backface-visibility: hidden;
+            transform: translate3d(0, 0, 0);
+        }
+        #banner .fill {
+            position: absolute; 
+            top: 3px; 
+            bottom: 0px; 
+            animation-name: fillAction;
+            animation-iteration-count: 1;
+            animation-timing-function: linear;
+            animation-duration: 4s;
+            animation-fill-mode: forwards;
+        }
+        #banner #waveShape {
+            animation-name: waveAction;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+            animation-duration: 0.5s;
+            width: 20px;
+            height: 15px;
+            fill: #7e0a0a;
+        }
+        @keyframes fillAction {
+            0% {
+                transform: translate(0, -2px);
+            }
+            100% {
+                transform: translate(0, -2px);
+            }
+        }
+        @keyframes waveAction {
+            0% {
+                transform: translate(-150px, 0);
+            }
+            100% {
+                transform: translate(0, 0px);
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="content">
-        <h1><b>Welcome to Wine search</b></h1>
+        <div>
+            <h1 style="float:left; margin-right: 70px;"><b>Welcome to Wine search</b></h1>
+            <div id="banner" style="left: 40px;">
+                <img src="/static/glass.png" width="50px" height="100px">
+                    <div class="fill">
+                        <svg style="border-radius: 50%; position: absolute; top: 3px; bottom: 0px; left: 5px; " version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="50px" viewBox="0 0 20 20" enable-background="new 0 0 300 300" xml:space="preserve">
+                            <path fill="#04ACFF" id="waveShape" d="M300,300V2.5c0,0-0.6-0.1-1.1-0.1c0,0-25.5-2.3-40.5-2.4c-15,0-40.6,2.4-40.6,2.4
+                            c-12.3,1.1-30.3,1.8-31.9,1.9c-2-0.1-19.7-0.8-32-1.9c0,0-25.8-2.3-40.8-2.4c-15,0-40.8,2.4-40.8,2.4c-12.3,1.1-30.4,1.8-32,1.9
+                            c-2-0.1-20-0.8-32.2-1.9c0,0-3.1-0.3-8.1-0.7V300H300z"/>
+                        </svg>
+            </div>
+        </div>
         <h3> Please select your search engine</h3>
+    </div>
 
         <form>
             <input type="radio" id="boolean" name="engine" value="boolean">
