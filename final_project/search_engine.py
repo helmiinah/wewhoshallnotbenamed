@@ -72,7 +72,7 @@ def init_exact_search(n):
 def rewrite_token(t):
     # for boolean search
     if t not in terms and t not in d:
-        return "np.zeros((1, len(wine_descriptions)), dtype=int)"
+        return "np.zeros((1, len(reviews['description'].tolist())), dtype=int)"
     else:
         return d.get(t, 'sparse_td_matrix[t2i["{:s}"]].todense()'.format(t))
 

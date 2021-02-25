@@ -73,11 +73,12 @@
       <img id="plot" src="{{ url_for('static', filename=idx+'_plt.png') }}" style="display:none; margin: auto;"/>
       <img id="wordcloud" src="{{ url_for('static', filename=idx+'_wordcloud.png') }}" style="display:none; margin: auto;"/>
     </div>
-    <h2>{{ name }}</h2>
+    <h2>{{ wine["title"] }}</h2>
     <p>Query: <span class="highlight">{{ query }}</span></p>
     <p>Number of matches: <b>{{ num_matches }}</b></p>
+    <h4>Description:</h4>
     <p>
-    {% for word in content.split() %}
+    {% for word in wine["description"].split() %}
         {% if engine == "boolean" %}
             {% if word.lower() in query.split() and word.lower() != "and" and  word.lower() != "or" and word.lower() != "not"%}
                 <b class="highlight">{{ word }}</b>
@@ -101,6 +102,8 @@
         {% endif %}
     {% endfor %}
     </p>
+
+    <p><b>Origin Country:</b> {{ wine["country"]}}</p>
   </div>
 </body>
 

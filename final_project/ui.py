@@ -109,13 +109,12 @@ def show_document(id):
 
     engine_choice = request.args.get('engine')
 
-    docs = engine.reviews['description'].tolist()
-    names = engine.reviews['title'].tolist()
     idx = int(id)
+    wine = engine.reviews.iloc[idx]
 
     # Count word matches inside document
     doc_matches = 0
-    for word in docs[idx].split():
+    for word in wine["description"].split():
         if engine_choice == "boolean":
             query_splitted = query.split()
 
@@ -138,11 +137,11 @@ def show_document(id):
                 if query == word.lower() or query in word.lower():
                     doc_matches += 1
 
-    generate_plot(idx, docs[idx], names[idx])
-    generate_wordcloud(idx, docs[idx])
+    generate_plot(idx, wine["description"], wine["title"])
+    generate_wordcloud(idx, wine["description"])
 
-    return render_template('wine.html', idx=str(idx), name=names[idx], content=docs[idx], query=query,
-                           num_matches=doc_matches, engine=engine_choice)
+    return render_template('wine.html', idx=str(idx), query=query,
+                           num_matches=doc_matches, engine=engine_choice, wine=wine)
 
 
 @app.route('/search/')
