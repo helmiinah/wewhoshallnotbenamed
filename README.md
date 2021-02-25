@@ -5,4 +5,6 @@ Repository for the University of Helsinki course KIK-LG211 Building NLP Applicat
  
 Wine review data for final project is from https://www.kaggle.com/zynicide/wine-reviews?select=winemag-data-130k-v2.csv
 
+Flag icons are from https://www.countryflags.io/
+
 Group consists of Essi, Helmiina, Jussi-Veikka and Laura.
