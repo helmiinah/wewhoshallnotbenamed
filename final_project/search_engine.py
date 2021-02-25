@@ -46,9 +46,6 @@ def initialize():
     # column automatically):
     reviews = pd.read_csv("./data/10k-winemag-reviews.csv", sep=",", usecols=range(1, 14))
 
-    # Print and inspect interesting columns (for fun)
-    print(reviews[['country', 'description', 'points', 'price', 'title', 'variety']].to_string())
-
     # NOTE: storing to individual series' is NOT necessary, this was done for fast testing purposes
     # Store wine names to a series:
     wine_names = reviews['title']
