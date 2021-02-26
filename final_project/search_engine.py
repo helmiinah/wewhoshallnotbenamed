@@ -51,11 +51,13 @@ def initialize():
                      "Turkey": "tr", "Greece": "gr", "Romania": "ro", "Brazil": "br", "Portugal": "pt", "Bulgaria": "bg", "Austria": "at", "Hungary": "hu", 
                      "Italy": "it", "Armenia": "am", "Peru": "pe", "India": "in", "US": "us", "Israel": "il", "Unknown": "Unknown"}
 
-
+    reviews["search_data"]= reviews['description'] + ' ' +reviews['variety'] + ' ' + reviews['title']
+    #print(reviews.iloc[1]['search_data'])
+    
     # initialize boolean search tools
     cv = CountVectorizer(lowercase=True, binary=True,
                          token_pattern=r"(?u)\b\w+\b")
-    sparse_matrix = cv.fit_transform(reviews['description'].tolist())
+    sparse_matrix = cv.fit_transform(reviews['search_data'].tolist())
     dense_matrix = sparse_matrix.todense()
     td_matrix = dense_matrix.T
     terms = cv.get_feature_names()
@@ -65,7 +67,7 @@ def initialize():
     # initialize relevance search tools for stemming
     gv_stem = TfidfVectorizer(tokenizer=tokenize, lowercase=True,
                               sublinear_tf=True, use_idf=True, norm="l2")
-    g_matrix_stem = gv_stem.fit_transform(reviews['description'].tolist()).T.tocsr()
+    g_matrix_stem = gv_stem.fit_transform(reviews['search_data'].tolist()).T.tocsr()
 
 
 def init_exact_search(n):
@@ -75,7 +77,7 @@ def init_exact_search(n):
     global g_matrix
     gv = TfidfVectorizer(lowercase=True,
                          sublinear_tf=True, use_idf=True, norm="l2", ngram_range=(n, n))
-    g_matrix = gv.fit_transform(reviews['description'].tolist()).T.tocsr()
+    g_matrix = gv.fit_transform(reviews['search_data'].tolist()).T.tocsr()
     return gv, g_matrix
 
 

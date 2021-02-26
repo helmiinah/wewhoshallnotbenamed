@@ -11,15 +11,29 @@
             padding: 25px;
             font-family: 'Titillium Web';
         }
-
+        .search_tools {
+          width: 70%;
+          margin: 0 auto;
+        }
         input,
         label,
         table {
             padding: 15px;
-            margin: 10px
+            margin: 10px;
+        }
+        table{
+          border-collapse: collapse;
+        } 
+        td, th {
+          border: 2px solid azure;
+          text-align: left;
+          padding: 8px;
+        }
+        tr:nth-child(even) {
+          background-color: #bbebfa;
         }
         .content {
-            max-width: 500px;
+            max-width: 950px;
             margin: auto;
             border: 2px solid rgb(72, 179, 187);
             border-radius: 5px;
@@ -98,6 +112,7 @@
 
 <body>
     <div class="content">
+      <div class="search_tools">
         <div>
             <h1 style="float:left; margin-right: 70px;"><b>Welcome to Wine search</b></h1>
             <div id="banner" style="left: 40px;">
@@ -137,27 +152,36 @@
                 </ul>
             </div>
         </form>
-
+      </div>
+      <div>
+        {% if matches %}
+        <h4>{{ number }} wines match your query "{{ query }}":</h4>
+        {% else %}
+        <h4>No results</h4>
+        {% endif %}
+      </div>
+      {% if matches %}
         <table>
             <tr>
-                <td>
-                    {% if matches %}
-                    <h4>{{ number }} wines match your query "{{ query }}":</h4>
-                    {% else %}
-                    <h4>No results</h4>
-                    {% endif %}
-                </td>
+              <th>#</th>
+              <th>Wine</th>
+              <th>Variety</th>
+              <th>Rating</th>
             </tr>
             <!--Go through each item in the "matches" variable sent from
                     search() function in the Flask app-->
             {% for item in matches %}
             <tr>
+                <td>{{ loop.index }}</td>
                 <!--Display the name of the item based on the "name" key-->
                 <td><a href="{{url_for('show_document', id=item['id'], query=query, engine=engine_choice)}}">{{ item["name"] }}</a></td>
+                <td>{{ item['variety'] }}</td>
+                <td>{{ item['points'] }}</td>
             </tr>
             <!--End for loop-->
             {% endfor %}
         </table>
+      {% endif %}
     </div>
 </body>
 
