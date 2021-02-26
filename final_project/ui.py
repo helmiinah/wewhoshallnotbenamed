@@ -71,7 +71,7 @@ def generate_plot(idx, document, name):
     plt.setp(ax.get_xticklabels(), rotation=30, horizontalalignment='right')
     plt.plot(phrases, scores)
     plt.tight_layout()
-    plot_path = 'static/' + str(idx) + '_plt.png'
+    plot_path = 'static/plots/' + str(idx) + '_plt.png'
     plt.savefig(plot_path)
     plt.close()
 
@@ -89,7 +89,7 @@ def generate_wordcloud(idx, document):
     plt.imshow(wordcloud)
     plt.axis("off")
     plt.tight_layout(pad=0)
-    plot_path = 'static/' + str(idx) + '_wordcloud.png'
+    plot_path = 'static/plots/' + str(idx) + '_wordcloud.png'
     plt.savefig(plot_path)
     plt.close()
 

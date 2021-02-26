@@ -70,8 +70,8 @@
     <button id="btn" onclick="showPlot()">Show theme plot</button>
     <button onclick="showWordcloud()">Show theme cloud</button>
     <div class="flex-container">
-      <img class="figure" id="plot" src="{{ url_for('static', filename=idx+'_plt.png') }}" style="display:none; margin: auto;"/>
-      <img class="figure" id="wordcloud" src="{{ url_for('static', filename=idx+'_wordcloud.png') }}" style="display:none; margin: auto;"/>
+      <img class="figure" id="plot" src="{{ url_for('static', filename='plots/'+idx+'_plt.png') }}" style="display:none; margin: auto;"/>
+      <img class="figure" id="wordcloud" src="{{ url_for('static', filename='plots/'+idx+'_wordcloud.png') }}" style="display:none; margin: auto;"/>
     </div>
     <h2>{{ wine["title"] }}</h2>
     <p>Query: <span class="highlight">{{ query }}</span></p>
