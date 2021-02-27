@@ -112,28 +112,30 @@ def show_document(id):
 
     # Count word matches inside document
     doc_matches = 0
-    for word in wine["description"].split():
+    for word in wine["description"].split() + wine["variety"].split():
         if engine_choice == "boolean":
             query_splitted = query.split()
 
             if "and" in query_splitted:
                 query_splitted.remove("and")
-            elif "or" in query_splitted:
+            if "or" in query_splitted:
                 query_splitted.remove("or")
-            elif "not" in query_splitted:
+            if "not" in query_splitted:
                 query_splitted.remove("not")
 
-            if word.lower() in query_splitted:
+            if word.lower().strip(",.;:!?") in query_splitted:
+                print(word.lower().strip(",.;:!?"))
                 doc_matches += 1
 
         elif engine_choice == "relevance":
             # Check if query was exact match search
             if '"' in query:
-                if query.strip('""') == word.lower():
+                if query.strip('""') == word.lower().strip(",.;:!?"):
                     doc_matches += 1
             else:
-                if query == word.lower() or query in word.lower():
-                    doc_matches += 1
+                for q_word in query.split():
+                    if q_word == word.lower().strip(",.;:!?") or q_word in word.lower().strip(",.;:!?"):
+                        doc_matches += 1
 
     generate_plot(idx, wine["description"], wine["title"])
     generate_wordcloud(idx, wine["description"])

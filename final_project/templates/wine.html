@@ -77,24 +77,23 @@
     <p>Query: <span class="highlight">{{ query }}</span></p>
     <p>Number of matches: <b>{{ num_matches }}</b></p>
     <h3>Description:</h3>
-    <p><b>Variety:</b> {{ wine["variety"] }}</p>
     <p>
     {% for word in wine["description"].split() %}
         {% if engine == "boolean" %}
-            {% if word.lower() in query.split() and word.lower() != "and" and  word.lower() != "or" and word.lower() != "not"%}
+            {% if word.lower().strip(",.;:!?") in query.split() and word.lower().strip(",.;:!?") != "and" and  word.lower().strip(",.;:!?") != "or" and word.lower().strip(",.;:!?") != "not"%}
                 <b class="highlight">{{ word }}</b>
             {% else %}
                 {{ word }}
             {% endif %}
         {% elif engine == "relevance" %}
             {% if '"' in query %}
-                {% if query.strip('""') == word.lower() %}
+                {% if query.strip('""') == word.lower().strip(",.;:!?") %}
                     <b class="highlight"> {{ word }} </b>
                 {% else %}
                     {{ word }}
                 {% endif %}
             {% else %}
-                {% if query == word.lower() or query in word.lower() %}
+                {% if query == word.lower().strip(",.;:!?") or query in word.lower().strip(",.;:!?") or word.lower().strip(",.;:!?") in query.split()%}
                     <b class="highlight"> {{ word }} </b>
                 {% else %}
                     {{ word }}
@@ -103,6 +102,35 @@
         {% endif %}
     {% endfor %}
     </p>
+    
+    <p><b>Variety:</b> 
+    {% for word in wine["variety"].split() %}
+        {% if engine == "boolean" %}
+            {% if word.lower().strip(",.;:!?") in query.split() and word.lower().strip(",.;:!?") != "and" and  word.lower().strip(",.;:!?") != "or" and word.lower().strip(",.;:!?") != "not"%}
+                <b class="highlight">{{ word }}</b>
+            {% else %}
+                {{ word }}
+            {% endif %}
+        {% elif engine == "relevance" %}
+            {% if '"' in query %}
+                {% if query.strip('""') == word.lower().strip(",.;:!?") %}
+                    <b class="highlight"> {{ word }} </b>
+                {% else %}
+                    {{ word }}
+                {% endif %}
+            {% else %}
+                {% if query == word.lower().strip(",.;:!?") or query in word.lower().strip(",.;:!?") or word.lower().strip(",.;:!?") in query.split()%}
+                    <b class="highlight"> {{ word }} </b>
+                {% else %}
+                    {{ word }}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    </p>
+
+    <p><b>Price:</b> ${{ wine["price"] }}</p>
+    <p><b>Rating:</b> {{ wine["points"] }}/100 points</p>
 
     <h3>Origin:</h3>
     <table>

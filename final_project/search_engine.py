@@ -51,7 +51,7 @@ def initialize():
                      "Turkey": "tr", "Greece": "gr", "Romania": "ro", "Brazil": "br", "Portugal": "pt", "Bulgaria": "bg", "Austria": "at", "Hungary": "hu", 
                      "Italy": "it", "Armenia": "am", "Peru": "pe", "India": "in", "US": "us", "Israel": "il", "Unknown": "Unknown"}
 
-    reviews["search_data"]= reviews['description'] + ' ' +reviews['variety'] + ' ' + reviews['title']
+    reviews["search_data"] = reviews['description'] + ' ' + reviews['variety'] + ' ' + reviews['title']
     #print(reviews.iloc[1]['search_data'])
     
     # initialize boolean search tools
