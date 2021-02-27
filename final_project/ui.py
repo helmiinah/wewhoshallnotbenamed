@@ -22,6 +22,11 @@ previous_matches = ''
 back_to_list = False
 
 
+@app.route('/')
+def redirect_to_search():
+    return redirect('/search', code=302)
+
+
 # Function search() is associated with the address base URL + "/search"
 @app.route('/search')
 def search():
