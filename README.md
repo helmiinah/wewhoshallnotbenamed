@@ -7,4 +7,6 @@ Wine review data for final project is from https://www.kaggle.com/zynicide/wine-
 
 Flag icons are from https://www.countryflags.io/
 
+Wine icon is from https://www.pngfind.com/mpng/hwbmiTi_icon-png-download-wine-glass-svg-file-free/
+
 Group consists of Essi, Helmiina, Jussi-Veikka and Laura.
