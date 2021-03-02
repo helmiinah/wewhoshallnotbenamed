@@ -7,6 +7,7 @@ import matplotlib
 import en_core_web_sm
 import os
 from wordcloud import WordCloud
+import re
 
 # Initialize Flask instance
 app = Flask(__name__)
@@ -40,6 +41,16 @@ def search():
 
     # Get query from URL variable
     query = request.args.get('query')
+
+    # Get the price range from the slider
+    price_range = request.args.get('price_range')
+
+    # Extract minimum & maximum price
+    if price_range:
+        range_limits = re.match(r"\$(\d+) - \$(\d+)", price_range)
+        min_price = float(range_limits[1])
+        max_price = float(range_limits[2])
+
     # Initialize list of matches
     matches = []
 
@@ -55,6 +66,10 @@ def search():
         else:
             matches = engine.relevance_search(query)
         previous_matches = matches
+
+    # Filter the matched wines based on price
+    if price_range:
+        matches = [wine for wine in matches if min_price <= wine["price"] <= max_price]
 
     # Render index.html with matches variable
     return render_template('index.html', matches=matches, number=len(matches), query=query, engine_choice=engine_choice)

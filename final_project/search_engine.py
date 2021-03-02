@@ -43,7 +43,8 @@ def initialize():
     # Reviews with all columns as a Pandas DataFrame (first column is omitted, because Pandas creates an index
     # column automatically):
     reviews = pd.read_csv("./static/10k-winemag-reviews.csv", sep=",", usecols=range(1, 14))
-    reviews = reviews.fillna("Unknown")
+    reviews["country"] = reviews["country"].fillna("Unknown")
+    reviews["price"] = pd.to_numeric(reviews["price"], downcast="float")
 
     country_codes = {"Luxembourg": "lu", "Spain": "es", "Australia": "au", "South Africa": "za", "Czech Republic": "cz", "Slovenia": "si", 
                      "France": "fr", "Moldova": "md", "Serbia": "rs", "Argentina": "ar", "Mexico": "mx", "Croatia": "hr", "England": "gb", "Germany": "de", 
@@ -113,9 +114,14 @@ def boolean_search(query):
             matches = []
             for doc_idx in hits_list:
                 matches.append(
-                    {"name": reviews.iloc[doc_idx]['title'], "content": reviews.iloc[doc_idx]['description'], "id": doc_idx, 
-                     "variety": reviews.iloc[doc_idx]['variety'], "points": reviews.iloc[doc_idx]['points'], "country": reviews.iloc[doc_idx]['country'],
-                     "winery": reviews.iloc[doc_idx]['winery']})
+                    {"name": reviews.iloc[doc_idx]['title'],
+                     "content": reviews.iloc[doc_idx]['description'],
+                     "id": doc_idx,
+                     "variety": reviews.iloc[doc_idx]['variety'],
+                     "points": reviews.iloc[doc_idx]['points'],
+                     "country": reviews.iloc[doc_idx]['country'],
+                     "winery": reviews.iloc[doc_idx]['winery'],
+                     "price": reviews.iloc[doc_idx]['price']})
                 # print(
                 #   f"Matching wine: [{doc_idx}] {wine_descriptions[doc_idx][:50]}...")
             return matches
@@ -229,9 +235,14 @@ def relevance_search(query_string):
                 print("Stemmed search term results: ")
                 for i, (score, doc_idx) in enumerate(stem_rank_hits):
                     matches.append(
-                        {"name": reviews.iloc[doc_idx]['title'], "content": reviews.iloc[doc_idx]['description'], "id": doc_idx, 
-                         "variety": reviews.iloc[doc_idx]['variety'], "points": reviews.iloc[doc_idx]['points'], "country": reviews.iloc[doc_idx]['country'],
-                         "winery": reviews.iloc[doc_idx]['winery']})
+                        {"name": reviews.iloc[doc_idx]['title'],
+                         "content": reviews.iloc[doc_idx]['description'],
+                         "id": doc_idx,
+                         "variety": reviews.iloc[doc_idx]['variety'],
+                         "points": reviews.iloc[doc_idx]['points'],
+                         "country": reviews.iloc[doc_idx]['country'],
+                         "winery": reviews.iloc[doc_idx]['winery'],
+                         "price": reviews.iloc[doc_idx]['price']})
                     # print("Wine #{:d} (score: {:.4f}): {:s}...".format(
                     #    doc_idx, score, wine_descriptions[doc_idx][:50]))
                 return matches
@@ -247,9 +258,14 @@ def relevance_search(query_string):
                 print("Exact seach term results: ")
                 for i, (score, doc_idx) in enumerate(exact_rank_hits):
                     matches.append(
-                        {"name": reviews.iloc[doc_idx]['title'], "content": reviews.iloc[doc_idx]['description'], "id": doc_idx, 
-                         "variety": reviews.iloc[doc_idx]['variety'], "points": reviews.iloc[doc_idx]['points'], "country": reviews.iloc[doc_idx]['country'],
-                         "winery": reviews.iloc[doc_idx]['winery']})
+                        {"name": reviews.iloc[doc_idx]['title'],
+                         "content": reviews.iloc[doc_idx]['description'],
+                         "id": doc_idx,
+                         "variety": reviews.iloc[doc_idx]['variety'],
+                         "points": reviews.iloc[doc_idx]['points'],
+                         "country": reviews.iloc[doc_idx]['country'],
+                         "winery": reviews.iloc[doc_idx]['winery'],
+                         "price": reviews.iloc[doc_idx]['price']})
                     # print("Wine #{:d} (score: {:.4f}): {:s}...".format(
                     #    doc_idx, score, wine_descriptions[doc_idx][:50]))
                 return matches
@@ -271,9 +287,14 @@ def relevance_search(query_string):
 
                 for i, (score, doc_idx) in enumerate(rank_hits):
                     matches.append(
-                        {"name": reviews.iloc[doc_idx]['title'], "content": reviews.iloc[doc_idx]['description'], "id": doc_idx, 
-                         "variety": reviews.iloc[doc_idx]['variety'], "points": reviews.iloc[doc_idx]['points'], "country": reviews.iloc[doc_idx]['country'],
-                         "winery": reviews.iloc[doc_idx]['winery']})
+                        {"name": reviews.iloc[doc_idx]['title'],
+                         "content": reviews.iloc[doc_idx]['description'],
+                         "id": doc_idx,
+                         "variety": reviews.iloc[doc_idx]['variety'],
+                         "points": reviews.iloc[doc_idx]['points'],
+                         "country": reviews.iloc[doc_idx]['country'],
+                         "winery": reviews.iloc[doc_idx]['winery'],
+                         "price": reviews.iloc[doc_idx]['price']})
                     # print("Wine #{:d} (score: {:.4f}): {:s}...".format(
                     #    doc_idx, score, wine_descriptions[doc_idx][:50]))
                 return matches
@@ -293,9 +314,14 @@ def relevance_search(query_string):
                 query_string))
             for i, (score, doc_idx) in enumerate(rank_hits):
                 matches.append(
-                    {"name": reviews.iloc[doc_idx]['title'], "content": reviews.iloc[doc_idx]['description'], "id": doc_idx, 
-                     "variety": reviews.iloc[doc_idx]['variety'], "points": reviews.iloc[doc_idx]['points'], "country": reviews.iloc[doc_idx]['country'],
-                     "winery": reviews.iloc[doc_idx]['winery']})
+                    {"name": reviews.iloc[doc_idx]['title'],
+                     "content": reviews.iloc[doc_idx]['description'],
+                     "id": doc_idx,
+                     "variety": reviews.iloc[doc_idx]['variety'],
+                     "points": reviews.iloc[doc_idx]['points'],
+                     "country": reviews.iloc[doc_idx]['country'],
+                     "winery": reviews.iloc[doc_idx]['winery'],
+                     "price": reviews.iloc[doc_idx]['price']})
                 # print("Wine #{:d} (score: {:.4f}): {:s}...".format(
                 #    doc_idx, score, wine_descriptions[doc_idx][:50]))
             return matches
@@ -312,9 +338,14 @@ def relevance_search(query_string):
             rank_hits = ranked_scores_and_doc_ids(hits)
             for i, (score, doc_idx) in enumerate(rank_hits):
                 matches.append(
-                    {"name": reviews.iloc[doc_idx]['title'], "content": reviews.iloc[doc_idx]['description'], "id": doc_idx, 
-                     "variety": reviews.iloc[doc_idx]['variety'], "points": reviews.iloc[doc_idx]['points'], "country": reviews.iloc[doc_idx]['country'],
-                     "winery": reviews.iloc[doc_idx]['winery']})
+                    {"name": reviews.iloc[doc_idx]['title'],
+                     "content": reviews.iloc[doc_idx]['description'],
+                     "id": doc_idx,
+                     "variety": reviews.iloc[doc_idx]['variety'],
+                     "points": reviews.iloc[doc_idx]['points'],
+                     "country": reviews.iloc[doc_idx]['country'],
+                     "winery": reviews.iloc[doc_idx]['winery'],
+                     "price": reviews.iloc[doc_idx]['price']})
                 # print("Wine #{:d} (score: {:.4f}): {:s}...".format(
                 #    doc_idx, score, wine_descriptions[doc_idx][:50]))
             return matches

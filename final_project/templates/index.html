@@ -3,7 +3,10 @@
 <head>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@200;300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Search engine</title>
     <style>
         body {
@@ -160,6 +163,11 @@
                     <li>Use an asterisk (*) for wildcard queries (e.g. "*ing" matches words ending with "ing")</li>
                 </ul>
             </div>
+            <p>
+                <label for="amount">Price range:</label>
+                <input type="text" name="price_range" id="amount" readonly style="border:0; color:black; font-weight:bold; font-family: 'Titillium Web';background-color: #c5b68b">
+            </p>
+            <div id="slider-range"></div>
         </form>
       </div>
       <div>
@@ -203,9 +211,7 @@
         }
     }
     set_engine_choice({{ engine_choice| tojson }});
-</script>
 
-<script>
     function showTooltip() {
         var x = document.getElementById("tooltip_box");
         if (x.style.display === "none") {
@@ -214,6 +220,23 @@
             x.style.display = "none";
         }
     }
+</script>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+      $( function() {
+        $( "#slider-range" ).slider({
+          range: true,
+          min: 4,
+          max: 1900,
+          values: [ 4, 1900 ],
+          slide: function( event, ui ) {
+            $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+          }
+        });
+        $( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
+          " - $" + $( "#slider-range" ).slider( "values", 1 ) );
+      } );
 </script>
 
 </html>
