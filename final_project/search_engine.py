@@ -131,7 +131,11 @@ def match_stems(words):
 
     if final_words:
         new_query_string = " ".join(final_words)
-        stem_query_vec = gv_stem.transform([new_query_string]).tocsc()
+        if gv_stem.transform([new_query_string]).tocsc().getnnz() == 0:
+            gv_stem.fit_transform(["expens"]).tocsc()
+            stem_query_vec = gv_stem.transform([new_query_string]).tocsc()
+        else:
+            stem_query_vec = gv_stem.transform([new_query_string]).tocsc()
     else:
         print(f"No matches for stemmed search '{words}'")
         print()
@@ -189,8 +193,11 @@ def match_wildcard(words):
 
 
 def ranked_scores_and_doc_ids(hits):
-    return sorted(zip(np.array(hits[hits.nonzero()])[0], hits.nonzero()[1]),
+    try:
+        return sorted(zip(np.array(hits[hits.nonzero()])[0], hits.nonzero()[1]),
                   reverse=True)
+    except:
+        import pdb; pdb.set_trace()
 
 
 def relevance_search(query_string):
