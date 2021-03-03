@@ -129,6 +129,10 @@
     {% endfor %}
     </p>
 
+    {% if 2 > wine["variety"].split()|length %}
+        <p>Read more about this variety <a href="https://en.wikipedia.org/wiki/{{ wine['variety'] }}">here</a></p>
+    {% endif %}
+
     <p><b>Price:</b> ${{ wine["price"] }}</p>
     <p><b>Rating:</b> {{ wine["points"] }}/100 points</p>
 
