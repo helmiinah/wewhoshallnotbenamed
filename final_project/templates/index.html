@@ -36,7 +36,7 @@
           background-color: #c5b68b;
         }
         .content {
-            max-width: 950px;
+            max-width: 1050px;
             margin: auto;
             border: 2px solid #c5b68b;
             border-radius: 5px;
@@ -74,7 +74,7 @@
             border: 1px solid black;
             border-radius: 10px;
             padding: 5px;
-            width: 200px;
+            width: 400px;
             display: inline-block;
             float: right;
         }
@@ -119,6 +119,8 @@
                 transform: translate(0, 0px);
             }
         }
+        
+        
     </style>
 </head>
 
@@ -135,47 +137,46 @@
                             c-12.3,1.1-30.3,1.8-31.9,1.9c-2-0.1-19.7-0.8-32-1.9c0,0-25.8-2.3-40.8-2.4c-15,0-40.8,2.4-40.8,2.4c-12.3,1.1-30.4,1.8-32,1.9
                             c-2-0.1-20-0.8-32.2-1.9c0,0-3.1-0.3-8.1-0.7V300H300z"/>
                         </svg>
-            </div>
+                    </div>
+             </div>
         </div>
-        <h3> Please select your search engine</h3>
-    </div>
+        <h3> Please select your search engine <button type="button" class="button round_button" title="Help" onclick="showTooltip()">?</button> 
+        <div id="tooltip_box" style="float:right; display:none;" >
 
+          <h4>Boolean Search</h4>
+            <ul>
+                <li>Searches for exact matches of search terms.</li>
+                <li>Use logical operators AND, OR and NOT to do combined queries.</li>
+            </ul>
+            <h4>Relevance Search</h4>
+            <ul>
+                <li>Use plain search terms to match words based on word stems.</li>
+                <li>Use quotation marks around search terms to search for exact matches.</li>
+                <li>Use an asterisk (*) for wildcard queries (e.g. "*ing" matches words ending with "ing")</li>
+            </ul>
+        </div>
+      </h3>
         <form>
             <input type="radio" id="boolean" name="engine" value="boolean">
             <label for="boolean">Boolean search</label><br>
             <input type="radio" id="relevance" name="engine" value="relevance">
             <label for="relevance">Relevance</label><br>
             <input type="text" name="query" autofocus>
-            <input type="submit" value="Search">
-            <button type="button" class="button round_button" title="Help" onclick="showTooltip()">?</button>
-            <div id="tooltip_box" style="float:right; display:none;">
-                <h4>Boolean Search</h4>
-                <ul>
-                    <li>Searches for exact matches of search terms.</li>
-                    <li>Use logical operators AND, OR and NOT to do combined queries.</li>
-                </ul>
-
-
-                <h4>Relevance Search</h4>
-                <ul>
-                    <li>Use plain search terms to match words based on word stems.</li>
-                    <li>Use quotation marks around search terms to search for exact matches.</li>
-                    <li>Use an asterisk (*) for wildcard queries (e.g. "*ing" matches words ending with "ing")</li>
-                </ul>
-            </div>
-
+                
+            <h3>You may define the search with: </h3>
             <p>
                 <label for="price">Price range:</label>
                 <input type="text" name="price_range" id="price" readonly style="border:0; color:black; font-weight:bold; font-family: 'Titillium Web'; background-color: #c5b68b">
             </p>
             <div id="slider-range"></div>
-
             <p>
                 <label for="rating">Minimum rating:</label>
                 <input type="text" name="min_rating" id="rating" readonly style="border:0; color:black; font-weight:bold; font-family: 'Titillium Web'; background-color: #c5b68b">
             </p>
             <div id="slider-range-max"></div>
-
+            <input type="submit" value="Search" style="float:right">
+           
+            
         </form>
       </div>
       <div>
