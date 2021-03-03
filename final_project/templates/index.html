@@ -163,11 +163,19 @@
                     <li>Use an asterisk (*) for wildcard queries (e.g. "*ing" matches words ending with "ing")</li>
                 </ul>
             </div>
+
             <p>
-                <label for="amount">Price range:</label>
-                <input type="text" name="price_range" id="amount" readonly style="border:0; color:black; font-weight:bold; font-family: 'Titillium Web';background-color: #c5b68b">
+                <label for="price">Price range:</label>
+                <input type="text" name="price_range" id="price" readonly style="border:0; color:black; font-weight:bold; font-family: 'Titillium Web'; background-color: #c5b68b">
             </p>
             <div id="slider-range"></div>
+
+            <p>
+                <label for="rating">Minimum rating:</label>
+                <input type="text" name="min_rating" id="rating" readonly style="border:0; color:black; font-weight:bold; font-family: 'Titillium Web'; background-color: #c5b68b"" >
+            </p>
+            <div id="slider-range-max"></div>
+
         </form>
       </div>
       <div>
@@ -224,19 +232,31 @@
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
-      $( function() {
+    $( function() {
         $( "#slider-range" ).slider({
-          range: true,
-          min: 4,
-          max: 1900,
-          values: [ 4, 1900 ],
-          slide: function( event, ui ) {
-            $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-          }
+            range: true,
+            min: 4,
+            max: 1900,
+            values: [ 4, 100 ],
+            slide: function( event, ui ) {
+            $( "#price" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+            }
         });
-        $( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
-          " - $" + $( "#slider-range" ).slider( "values", 1 ) );
-      } );
-</script>
+    $( "#price" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
+        " - $" + $( "#slider-range" ).slider( "values", 1 ) );
+    } );
 
+    $( function() {
+        $( "#slider-range-max" ).slider({
+            range: "max",
+            min: 0,
+            max: 100,
+            value: 0,
+            slide: function( event, ui ) {
+            $( "#rating" ).val( ui.value );
+            }
+        });
+    $( "#rating" ).val( $( "#slider-range-max" ).slider( "value" ) );
+    } );
+  </script>
 </html>

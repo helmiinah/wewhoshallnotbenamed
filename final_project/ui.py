@@ -42,7 +42,7 @@ def search():
     # Get query from URL variable
     query = request.args.get('query')
 
-    # Get the price range from the slider
+    # Get the price range set by the user
     price_range = request.args.get('price_range')
 
     # Extract minimum & maximum price
@@ -50,6 +50,11 @@ def search():
         range_limits = re.match(r"\$(\d+) - \$(\d+)", price_range)
         min_price = float(range_limits[1])
         max_price = float(range_limits[2])
+
+    # Get the minimum rating set by the user
+    min_rating = request.args.get('min_rating')
+    if min_rating:
+        min_rating = float(min_rating)
 
     # Initialize list of matches
     matches = []
@@ -70,6 +75,10 @@ def search():
     # Filter the matched wines based on price
     if price_range:
         matches = [wine for wine in matches if min_price <= wine["price"] <= max_price]
+
+    # Filter the matched wines based on rating
+    if min_rating:
+        matches = [wine for wine in matches if wine["points"] >= min_rating]
 
     # Render index.html with matches variable
     return render_template('index.html', matches=matches, number=len(matches), query=query, engine_choice=engine_choice)
