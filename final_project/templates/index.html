@@ -49,7 +49,7 @@
           background-color: #c5b68b;
         }
         .content {
-            max-width: 1050px;
+            max-width: 1100px;
             margin: auto;
             border: 2px solid #c5b68b;
             border-radius: 5px;
@@ -187,21 +187,18 @@
                 <input type="text" name="min_rating" id="rating" readonly style="border:0; color:black; font-weight:bold; font-family: 'Titillium Web'; background-color: #c5b68b">
             </p>
             <div id="slider-range-max"></div>
-            <input type="submit" value="Search" style="float:right">
-           
-            
+            <input type="submit" value="Search" style="float:right; ">   
         </form>
       </div>
       <div>
         {% if matches %}
-        <h4 class="results">{{ number }} wines match your query "{{ query }}":</h4>
+        <h4 class="results" style="margin-left: 150px; margin-top:75px">{{ number }} wines match your query "{{ query }}":</h4>
+          {% if plot_path != "" %}
+            <button onclick="showCountryPlot()">Show statistics</button>
+            <img class="country_plot" id="piechart" src="{{ plot_path }}" style="display:none; margin: auto;">
+          {% endif %}
         {% else %}
-        <h4 style="margin-left: 200px;">No results</h4>
-        {% endif %}
-        {% if matches %}
-            {% if plot_path != "" %}
-                <img class="country_plot" id="piechart" src="{{ url_for('static', filename=plot_path) }}">
-            {% endif %}
+        <h4 style="margin-left: 150px; margin-top:75px">No results</h4>
         {% endif %}
       </div>
 
@@ -212,6 +209,7 @@
               <th>Wine</th>
               <th>Variety</th>
               <th>Rating</th>
+              <th>Price $</th>
             </tr>
             <!--Go through each item in the "matches" variable sent from
                     search() function in the Flask app-->
@@ -222,6 +220,7 @@
                 <td><a href="{{url_for('show_document', id=item['id'], query=query, engine=engine_choice)}}">{{ item["name"] }}</a></td>
                 <td>{{ item['variety'] }}</td>
                 <td>{{ item['points'] }}</td>
+                <td>{{ item['price']|replace('.0','') }}</td>
             </tr>
             <!--End for loop-->
             {% endfor %}
@@ -278,5 +277,14 @@
         });
     $( "#rating" ).val( $( "#slider-range-max" ).slider( "value" ) );
     } );
+
+    function showCountryPlot() {
+      var x = document.getElementById("piechart");
+      if (x.style.display === "none") {
+          x.style.display = "block";
+      } else {
+          x.style.display = "none";
+      }
+    }
   </script>
 </html>

@@ -90,9 +90,11 @@ def search():
 
         plot_path = 'static/plots/country_plot_' + random_id + '.png'
         generate_country_plot(matches, plot_path)
-
+    else:
+        plot_path=''
+    print("path", plot_path)
     # Render index.html with matches variable
-    return render_template('index.html', matches=matches, number=len(matches), query=query, engine_choice=engine_choice)
+    return render_template('index.html', matches=matches, number=len(matches), query=query, engine_choice=engine_choice, plot_path=plot_path)
 
 
 def generate_plot(idx, document, name):
@@ -139,8 +141,9 @@ def generate_country_plot(matches, plot_path):
     counts = matches["country"].value_counts()
     labels = counts.keys()
     values = counts.values
+    
     fig1, ax = plt.subplots()
-    l = ax.pie(values, startangle=-90)
+    l = ax.pie(values, startangle=-90) # autopct='%1.1f%%' <- Percentage
 
     # Add the labels so that their angle aligns with the slice:
     for label, t in zip(labels, l[1]):
