@@ -9,6 +9,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Search engine</title>
     <style>
+        .results {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 70%;
+        }
+
+        .country_plot {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            max-height: 450px;
+        }
         body {
             background-color: rgb(240, 233, 197);
             padding: 25px;
@@ -180,11 +193,17 @@
       </div>
       <div>
         {% if matches %}
-        <h4>{{ number }} wines match your query "{{ query }}":</h4>
+        <h4 class="results">{{ number }} wines match your query "{{ query }}":</h4>
         {% else %}
         <h4 style="margin-left: 200px;">No results</h4>
         {% endif %}
+        {% if matches %}
+            {% if plot_path != "" %}
+                <img class="country_plot" id="piechart" src="{{ url_for('static', filename=plot_path) }}">
+            {% endif %}
+        {% endif %}
       </div>
+
       {% if matches %}
         <table>
             <tr>
