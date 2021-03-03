@@ -5,7 +5,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@200;300&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
-    <title>{{ name }}</title>
+    <title>{{ wine["title"] }}</title>
     <style>
         body {
             background-color:  rgb(240, 233, 197);
@@ -65,8 +65,6 @@
 
 <body>
   <div class="content">
-    <a href="{{url_for('return_to_results') }}">
-        <button>Back to results</button></a>
     <button id="btn" onclick="showPlot()">Show theme plot</button>
     <button onclick="showWordcloud()">Show theme cloud</button>
     <div class="flex-container">
