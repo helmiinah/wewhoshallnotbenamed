@@ -8,6 +8,9 @@ import en_core_web_sm
 import os
 from wordcloud import WordCloud
 import re
+import math
+import pandas as pd
+from random import randint
 
 # Initialize Flask instance
 app = Flask(__name__)
@@ -80,6 +83,14 @@ def search():
     if min_rating:
         matches = [wine for wine in matches if wine["points"] >= min_rating]
 
+    if matches:
+
+        # Generate a random id for the country plot image
+        random_id = str(randint(0, 1000000))
+
+        plot_path = 'static/plots/country_plot_' + random_id + '.png'
+        generate_country_plot(matches, plot_path)
+
     # Render index.html with matches variable
     return render_template('index.html', matches=matches, number=len(matches), query=query, engine_choice=engine_choice)
 
@@ -119,6 +130,29 @@ def generate_wordcloud(idx, document):
     plt.axis("off")
     plt.tight_layout(pad=0)
     plot_path = 'static/plots/' + str(idx) + '_wordcloud.png'
+    plt.savefig(plot_path)
+    plt.close()
+
+
+def generate_country_plot(matches, plot_path):
+    matches = pd.DataFrame(matches)
+    counts = matches["country"].value_counts()
+    labels = counts.keys()
+    values = counts.values
+    fig1, ax = plt.subplots()
+    l = ax.pie(values, startangle=-90)
+
+    # Add the labels so that their angle aligns with the slice:
+    for label, t in zip(labels, l[1]):
+        x, y = t.get_position()
+        angle = int(math.degrees(math.atan2(y, x)))
+        ha = "left"
+        if x < 0:
+            angle -= 180
+            ha = "right"
+        plt.annotate(label, xy=(x, y), rotation=angle, ha=ha, va="center", rotation_mode="anchor", size=8)
+
+    plt.tight_layout(pad=0)
     plt.savefig(plot_path)
     plt.close()
 
