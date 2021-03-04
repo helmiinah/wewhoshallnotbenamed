@@ -194,6 +194,9 @@ def show_document(id):
             if '"' in query:
                 if query.strip('""') == word.lower().strip(",.;:!?"):
                     doc_matches += 1
+            elif '*' in query:
+                if query.strip('*') in word.lower().strip(",.;:!?"):
+                    doc_matches += 1
             else:
                 for q_word in query.split():
                     if q_word == word.lower().strip(",.;:!?") or q_word in word.lower().strip(",.;:!?"):

@@ -92,6 +92,12 @@
                 {% else %}
                     {{ word }}
                 {% endif %}
+            {% elif '*' in query %}
+                {% if query.strip('*') in word.lower().strip(",.;:!?") %}
+                    <b class="highlight"> {{ word }} </b>
+                {% else %}
+                    {{ word }}
+                {% endif %}
             {% else %}
                 {% if query == word.lower().strip(",.;:!?") or query in word.lower().strip(",.;:!?") or word.lower().strip(",.;:!?") in query.split()%}
                     <b class="highlight"> {{ word }} </b>
