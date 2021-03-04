@@ -154,7 +154,8 @@ def generate_country_plot(matches, plot_path):
             angle -= 180
             ha = "right"
         plt.annotate(label, xy=(x, y), rotation=angle, ha=ha, va="center", rotation_mode="anchor", size=8)
-
+    
+    fig1.set_facecolor('#c5b68b')
     plt.tight_layout(pad=0)
     plt.savefig(plot_path)
     plt.close()
