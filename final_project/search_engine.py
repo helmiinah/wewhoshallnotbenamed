@@ -191,7 +191,7 @@ def match_wildcard(words):
         print()
         return None
 
-    return query_vec
+    return query_vec, ", ".join(query_words)
 
 
 def ranked_scores_and_doc_ids(hits):
@@ -300,7 +300,7 @@ def relevance_search(query_string):
                 return matches
 
     elif "*" in query_string:
-        query_vec = match_wildcard(query_string)
+        query_vec, words = match_wildcard(query_string)
 
         # Cosine similarity
         hits = np.dot(query_vec, g_matrix)
@@ -324,7 +324,7 @@ def relevance_search(query_string):
                      "price": reviews.iloc[doc_idx]['price']})
                 # print("Wine #{:d} (score: {:.4f}): {:s}...".format(
                 #    doc_idx, score, wine_descriptions[doc_idx][:50]))
-            return matches
+            return matches, words
 
     else:  # stemming can be used
         query_vec = match_stems(words)

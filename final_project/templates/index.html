@@ -193,6 +193,9 @@
       <div>
         {% if matches %}
         <h4 class="results" style="margin-left: 150px; margin-top:75px">{{ number }} wines match your query "{{ query }}":</h4>
+        {% if query_words %}
+          <p style="margin-left: 150px">Searched for words: {{query_words}}</p>
+        {% endif %}
           {% if plot_path != "" %}
             <button onclick="showCountryPlot()">Show statistics</button>
             <img class="country_plot" id="piechart" src="{{ plot_path }}" style="display:none; margin: auto;">

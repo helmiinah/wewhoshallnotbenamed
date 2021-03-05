@@ -49,6 +49,8 @@ def search():
     # Get the price range set by the user
     price_range = request.args.get('price_range')
 
+    wildcard_query_words = ""
+
     # Extract minimum & maximum price
     if price_range:
         range_limits = re.match(r"\$(\d+) - \$(\d+)", price_range)
@@ -74,6 +76,8 @@ def search():
 
         else:
             matches = engine.relevance_search(query)
+            if len(matches) == 2:
+                matches, wildcard_query_words = matches
         #previous_matches = matches
 
     # Filter the matched wines based on price
@@ -85,7 +89,6 @@ def search():
         matches = [wine for wine in matches if wine["points"] >= min_rating]
 
     if matches:
-
         # Generate a random id for the country plot image
         random_id = str(randint(0, 1000000))
 
@@ -93,8 +96,12 @@ def search():
         generate_country_plot(matches, plot_path)
     else:
         plot_path=''
-    # Render index.html with matches variable
-    return render_template('index.html', matches=matches, number=len(matches), query=query, engine_choice=engine_choice, plot_path=plot_path)
+
+    if wildcard_query_words != "":
+        return render_template('index.html', matches=matches, number=len(matches), query=query, engine_choice=engine_choice, 
+                               plot_path=plot_path, query_words = wildcard_query_words)
+    else:
+        return render_template('index.html', matches=matches, number=len(matches), query=query, engine_choice=engine_choice, plot_path=plot_path)
 
 
 @app.route('/search/<id>')
