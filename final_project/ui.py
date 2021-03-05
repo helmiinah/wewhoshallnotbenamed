@@ -150,8 +150,10 @@ def show_document(id):
 
     wiki_path = re.sub(r"\s", r"_", wine["variety"])
 
+    # Make a request to the possible Wikipedia article of the variety
     try:
         response = requests.get(f"https://en.wikipedia.org/wiki/{wiki_path}")
+        # If successful, the article exists and can be shown to user:
         if str(response.status_code).startswith('2'):
             return render_template('wine.html', idx=str(idx), query=query, flag=country_codes[wine['country']],
                                    num_matches=doc_matches, engine=engine_choice, wine=wine, wiki_path=wiki_path)
