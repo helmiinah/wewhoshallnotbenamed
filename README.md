@@ -18,9 +18,11 @@ have Python installed, see [Python installation](https://www.python.org/download
 
 5) Install the project dependencies by `pip install -r requirements.txt` (or `pip3 install -r requirements.txt`)
 
-6) To run the final project, `cd` to **final_project** directory
+6) Install PKE following these [instructions](https://github.com/boudinfl/pke)
 
-7) Provide the following environment variables:
+7) To run the final project, `cd` to **final_project** directory
+
+8) Provide the following environment variables:
 
 ```
 export FLASK_APP=ui.py  
@@ -43,7 +45,7 @@ $env:FLASK_ENV = "development"
 $env:FLASK_RUN_PORT = "8000"  
 ```
 
-8) Execute `flask run` and go to `localhost:8000/search` to see the project on browser.
+9) Execute `flask run` and go to `localhost:8000/search` to see the project on browser.
 
 ## Known issues
  
