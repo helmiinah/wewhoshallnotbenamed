@@ -88,6 +88,9 @@ def search():
     if min_rating:
         matches = [wine for wine in matches if wine["points"] >= min_rating]
 
+    for wine in matches:
+        wine.loc["price-quality"] = round(wine["points"] / wine["price"], 1)
+
     if matches:
         # Generate a random id for the country plot image
         random_id = str(randint(0, 1000000))

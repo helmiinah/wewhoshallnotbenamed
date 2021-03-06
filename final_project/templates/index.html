@@ -213,6 +213,7 @@
               <th>Variety</th>
               <th>Rating</th>
               <th>Price $</th>
+              <th>Price-Quality</th>
             </tr>
             <!--Go through each item in the "matches" variable sent from
                     search() function in the Flask app-->
@@ -223,6 +224,7 @@
                 <td>{{ item['variety'] }}</td>
                 <td>{{ item['points'] }}</td>
                 <td>{{ item['price']|replace('.0','') }}</td>
+                <td>{{ item['price-quality'] }}</td>
             </tr>
             <!--End for loop-->
             {% endfor %}
