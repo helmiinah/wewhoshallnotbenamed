@@ -215,14 +215,14 @@
           <p style="margin-left: 150px">Searched for words: {{query_words}}</p>
         {% endif %}
           {% if plot_path != "" %}
-            <button onclick="showCountryPlot()">Show statistics</button>
+            <button onclick="showCountryPlot()">Show top 10 origin countries</button>
             <img class="country_plot" id="piechart" src="{{ plot_path }}" style="display:none; margin: auto;">
           {% endif %}
         {% else %}
         <h4 style="margin-left: 150px; margin-top:75px">No results</h4>
         {% endif %}
       </div>
-      
+
       {% if matches %}    
         <table id="results" class="table">
           <thead>
