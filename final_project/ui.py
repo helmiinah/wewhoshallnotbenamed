@@ -190,14 +190,18 @@ def generate_wordcloud(idx, document):
     plt.close()
 
 
+def get_top10_labels(sizes, labels):
+    new_labels = [label if size in sorted(sizes)[-10:] else '' for size, label in zip(sizes, labels)]
+    return new_labels
+
+
 def generate_country_plot(matches, plot_path):
     matches = pd.DataFrame(matches)
     counts = matches["country"].value_counts()
-    labels = counts.keys()
     values = counts.values
-    
+    labels = get_top10_labels(values, counts.keys())
     fig1, ax = plt.subplots()
-    l = ax.pie(values, startangle=-90) # autopct='%1.1f%%' <- Percentage
+    l = ax.pie(values, startangle=-90)  # autopct='%1.1f%%' <- Percentage
 
     # Add the labels so that their angle aligns with the slice:
     for label, t in zip(labels, l[1]):
@@ -208,7 +212,7 @@ def generate_country_plot(matches, plot_path):
             angle -= 180
             ha = "right"
         plt.annotate(label, xy=(x, y), rotation=angle, ha=ha, va="center", rotation_mode="anchor", size=8)
-    
+
     fig1.set_facecolor('#c5b68b')
     plt.tight_layout(pad=0)
     plt.savefig(plot_path)
