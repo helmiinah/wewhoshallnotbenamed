@@ -52,6 +52,8 @@ def initialize():
                      "Italy": "it", "Armenia": "am", "Peru": "pe", "India": "in", "US": "us", "Israel": "il", "Unknown": "Unknown"}
 
     reviews["search_data"] = reviews['description'] + ' ' + reviews['variety'] + ' ' + reviews['title']
+    reviews["price-quality"] = round(reviews['points']/reviews["price"], 1)
+    
 
     # initialize boolean search tools
     cv = CountVectorizer(lowercase=True, binary=True,
@@ -263,31 +265,3 @@ def relevance_search(query_string):
 
 if __name__ == "__main__":
     initialize()
-    print("Welcome to Wine Review search engine!")
-    while True:
-        engine = input(
-            "\nChoose search engine (0 for boolean, 1 for relevance, enter to quit): ")
-        if engine == "":
-            break
-        if engine == '0':
-            while True:
-                print('\n-BOOLEAN SEARCH-')
-                print('(press enter to return to engine menu)')
-                query = input(
-                    ">Add a query: ").lower().strip()
-                if query == "":
-                    break
-                boolean_search(query)
-        elif engine == "1":
-            while True:
-                print('\n-RELEVANCE SEARCH-')
-                print('(press enter to return to engine menu, use "" for exact match)')
-                query = input(
-                    ">Add a query: ").lower().strip()
-                if query == "":
-                    break
-                relevance_search(query)
-        else:
-            print("No such engine.")
-
-    print('Goodbye!')
