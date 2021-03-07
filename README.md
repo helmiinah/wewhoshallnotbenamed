@@ -32,7 +32,7 @@ export FLASK_RUN_PORT=8000
 Windows:
 
 ```
-set FLASK_APP=flaskdemo.py  
+set FLASK_APP=ui.py  
 set FLASK_ENV=development  
 set FLASK_RUN_PORT=8000  
 ```
@@ -40,7 +40,7 @@ set FLASK_RUN_PORT=8000
 Windows Powershell:
 
 ```
-$env:FLASK_APP = "flaskdemo.py"  
+$env:FLASK_APP = "ui.py"  
 $env:FLASK_ENV = "development"  
 $env:FLASK_RUN_PORT = "8000"  
 ```
