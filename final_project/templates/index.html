@@ -48,6 +48,13 @@
         tr:nth-child(even) {
           background-color: #c5b68b;
         }
+        th.price, th.rating  {
+          width: 10%
+        }
+
+        th.order {
+          width: 5%
+        }
         .content {
             max-width: 1100px;
             margin: auto;
@@ -79,6 +86,16 @@
 
         .round_button:hover {
              background-color: #E8E8E8;
+        }
+        i:hover {
+          border: 1px dashed #7e0a0a;
+        }
+
+        .sort {
+          background-color: #c5b68b;
+          font-size: 10px;
+          border-radius: 4px;
+          border: 0px;
         }
 
         #tooltip_box {
@@ -190,6 +207,7 @@
             <input type="submit" value="Search" style="float:right; ">   
         </form>
       </div>
+      
       <div>
         {% if matches %}
         <h4 class="results" style="margin-left: 150px; margin-top:75px">{{ number }} wines match your query "{{ query }}":</h4>
@@ -204,19 +222,34 @@
         <h4 style="margin-left: 150px; margin-top:75px">No results</h4>
         {% endif %}
       </div>
-
-      {% if matches %}
-        <table>
+      
+      {% if matches %}    
+        <table id="results" class="table">
+          <thead>
             <tr>
-              <th>#</th>
-              <th>Wine</th>
-              <th>Variety</th>
-              <th>Rating</th>
-              <th>Price $</th>
-              <th>Price-Quality</th>
+              <th class="order" data-type="number">
+                # <button class="sort">&#9660;</button>
+              </th>
+              <th class="wine">
+                Wine
+              </th>
+              <th class="variety">
+                Variety <button class="sort">&#9660;</button>
+              </th>
+              <th class="rating" data-type="number">
+                Rating <button class="sort">&#9660;</button>
+              </th>
+              <th class="price" data-type="number">
+                Price $ <button class="sort">&#9660;</button>
+              </th>
+              <th class="pq" data-type="number">
+                Price-Quality Ratio <button class="sort">&#9660;</button>
+              </th>
             </tr>
+          </thead>
             <!--Go through each item in the "matches" variable sent from
                     search() function in the Flask app-->
+          <tbody>
             {% for item in matches %}
             <tr>
                 <td>{{ loop.index }}</td>
@@ -228,12 +261,82 @@
             </tr>
             <!--End for loop-->
             {% endfor %}
+          </tbody>
         </table>
       {% endif %}
     </div>
 </body>
 
 <script>
+  //Table reorder source: https://github.com/phuoc-ng/html-dom/blob/master/demo/sort-a-table-by-clicking-its-headers/index.html
+  document.addEventListener('DOMContentLoaded', function() {
+    const table = document.getElementById('results');
+    const headers = table.querySelectorAll('th');
+    const tableBody = table.querySelector('tbody');
+    const rows = tableBody.querySelectorAll('tr');
+
+    // Track sort directions
+    const directions = Array.from(headers).map(function(header) {
+        return '';
+    });
+
+    // Transform the content of given cell in given column
+    const transform = function(index, content) {
+        // Get the data type of column
+        const type = headers[index].getAttribute('data-type');
+        switch (type) {
+            case 'number':
+                return parseFloat(content);
+            case 'string':
+            default:
+                return content;
+        }
+    };
+
+    const sortColumn = function(index) {
+        // Get the current direction
+        const direction = directions[index] || 'asc';
+
+        // A factor based on the direction
+        const multiplier = (direction === 'asc') ? 1 : -1;
+
+        const newRows = Array.from(rows);
+
+        newRows.sort(function(rowA, rowB) {
+            const cellA = rowA.querySelectorAll('td')[index].innerHTML;
+            const cellB = rowB.querySelectorAll('td')[index].innerHTML;
+
+            const a = transform(index, cellA);
+            const b = transform(index, cellB);    
+
+            switch (true) {
+                case a > b: return 1 * multiplier;
+                case a < b: return -1 * multiplier;
+                case a === b: return 0;
+            }
+        });
+
+        // Remove old rows
+        [].forEach.call(rows, function(row) {
+            tableBody.removeChild(row);
+        });
+
+        // Reverse the direction
+        directions[index] = direction === 'asc' ? 'desc' : 'asc';
+
+        // Append new row
+        newRows.forEach(function(newRow) {
+            tableBody.appendChild(newRow);
+        });
+    };
+
+    [].forEach.call(headers, function(header, index) {
+        header.addEventListener('click', function() {
+            sortColumn(index);
+        });
+    });
+  });
+//end table resort
     function set_engine_choice(engine_choice) {
         if (engine_choice == "relevance") {
             document.getElementById("relevance").checked = true;

@@ -18,8 +18,7 @@ app = Flask(__name__)
 engine.initialize()
 
 matplotlib.use('Agg')
-engine_choice = 'boolean'
-
+engine_choice = 'boolean' # to help ui remember engine choice
 
 @app.route('/')
 def redirect_to_search():
