@@ -53,6 +53,7 @@ $env:FLASK_RUN_PORT = "8000"
 - Wine review data for final project is from https://www.kaggle.com/zynicide/wine-reviews?select=winemag-data-130k-v2.csv
 - Flag icons are from https://www.countryflags.io/
 - Wine icon is from https://www.pngfind.com/mpng/hwbmiTi_icon-png-download-wine-glass-svg-file-free/
+- Wine bottle silhouette is from http://clipart-library.com/clipart/8i6o4d5iE.htm
 
 ## Contributors
 Group consists of Essi, Helmiina, Jussi-Veikka and Laura.
