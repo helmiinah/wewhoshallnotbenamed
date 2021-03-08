@@ -7,6 +7,9 @@
     <meta charset="UTF-8">
     <title>{{ wine["title"] }}</title>
     <style>
+        * {
+            box-sizing: border-box;
+            }
         body {
             background-color:  rgb(240, 233, 197);
             padding: 25px;
@@ -38,6 +41,22 @@
           flex-flow: wrap;
           padding: 15px;
         }
+
+        .row {
+            display: flex;
+        }
+        .column {
+        float: left;
+        padding: 10px;
+        }
+
+        .left {
+        width: 40%;
+        }
+        .right {
+        width: 60%;
+        }
+
     </style>
     <script>
         // function imageShow(){
@@ -72,6 +91,12 @@
       <img class="figure" id="wordcloud" src="{{ url_for('static', filename='plots/'+idx+'_wordcloud.png') }}" style="display:none; margin: auto;"/>
     </div>
     <h2>{{ wine["title"] }}</h2>
+    <div class="row">
+    <div class="column left">
+        <img src="/static/cellar.jpg" width="400px" height="640px">
+        <h6>Photo by Klara Kulikova on Unsplash</h6>
+    </div>
+    <div class="column right">
     <p>Query: <span class="highlight">{{ query }}</span></p>
     <p>Number of matches: <b>{{ num_matches }}</b></p>
     <h3>Description:</h3>
@@ -157,6 +182,8 @@
             {% endif %}
         </tr>
     </table>
+    </div>
+    </div>
   </div>
 </body>
 
