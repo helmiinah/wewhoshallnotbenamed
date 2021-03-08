@@ -13,6 +13,8 @@ import math
 import pandas as pd
 from random import randint
 import requests
+import numpy as np
+from PIL import Image
 
 # Initialize Flask instance
 app = Flask(__name__)
@@ -183,11 +185,17 @@ def generate_plot(keyphrases, idx, name):
     plt.close()
 
 
+def red_color_func(word, font_size, font_path, position, orientation, random_state=None):
+    # Function source: https://github.com/amueller/word_cloud/issues/52
+    return "hsl(10, 100%%, %d%%)" % randint(40, 100)
+
+
 def generate_wordcloud(keyphrases, idx):
     keyphrases = dict(keyphrases)
     wordcloud = WordCloud(width=800, height=800,
                           background_color='white',
-                          min_font_size=10).generate_from_frequencies(keyphrases)
+                          min_font_size=10,
+                          color_func=red_color_func).generate_from_frequencies(keyphrases)
     plt.figure()
     plt.imshow(wordcloud)
     plt.axis("off")
@@ -201,10 +209,13 @@ def generate_wordcloud_matches(matches, plot_path):
     matches = pd.DataFrame(matches)
     descriptions = " ".join([desc for desc in matches["description"]])
     stopwords = set(list(STOPWORDS) + ["wine", "drink", "flavor", "flavors", "finish", "aroma", "aromas", "palate"])
-    wordcloud = WordCloud(width=800, height=800,
+    mask = np.array(Image.open("static/winebottle.png"))
+    wordcloud = WordCloud(width=1500, height=1500,
                           background_color='#c5b68b',
                           min_font_size=10,
-                          stopwords=stopwords).generate(descriptions)
+                          stopwords=stopwords,
+                          mask=mask,
+                          color_func=red_color_func).generate(descriptions)
     plt.figure()
     plt.imshow(wordcloud)
     plt.axis("off")
