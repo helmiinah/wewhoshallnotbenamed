@@ -8,12 +8,13 @@
     <title>{{ wine["title"] }}</title>
     <style>
         * {
-            box-sizing: border-box;
-            }
+          box-sizing: border-box;
+        }
+
         body {
-            background-color:  rgb(240, 233, 197);
-            padding: 25px;
-            font-family: 'Titillium Web';
+          background-color:  rgb(240, 233, 197);
+          padding: 25px;
+          font-family: 'Titillium Web';
            
         }
         .content{
@@ -23,13 +24,13 @@
           
         }
         button {
-            padding: 5px;
-            background-color: white;
-            border-radius: 4px;
+          padding: 5px;
+          background-color: white;
+          border-radius: 4px;
         }
         .highlight {
-            color:rgb(243, 243, 247);
-            background-color: rgb(70, 12, 12);
+          color:rgb(243, 243, 247);
+          background-color: rgb(70, 12, 12);
         }
         .figure {
           border: 5px solid #c5b68b;
@@ -43,18 +44,18 @@
         }
 
         .row {
-            display: flex;
+          display: flex;
         }
         .column {
-        float: left;
-        padding: 10px;
+          float: left;
+          padding: 10px;
         }
 
         .left {
-        width: 42%;
+          width: 42%;
         }
         .right {
-        width: 58%;
+          width: 58%;
         }
 
     </style>
@@ -92,97 +93,97 @@
     </div>
     <h2>{{ wine["title"] }}</h2>
     <div class="row">
-    <div class="column left">
+      <div class="column left">
         <img src="/static/cellar.jpg" width="400px" height="640px">
         <h6>Photo by Klara Kulikova on Unsplash</h6>
-    </div>
-    <div class="column right">
-    <p>Query: <span class="highlight">{{ query }}</span></p>
-    <p>Number of matches: <b>{{ num_matches }}</b></p>
-    <h3>Description:</h3>
-    <p>
-    {% for word in wine["description"].split() %}
-        {% if engine == "boolean" %}
-            {% if word.lower().strip(",.;:!?") in query.split() and word.lower().strip(",.;:!?") != "and" and  word.lower().strip(",.;:!?") != "or" and word.lower().strip(",.;:!?") != "not"%}
-                <b class="highlight">{{ word }}</b>
-            {% else %}
-                {{ word }}
+      </div>
+      <div class="column right">
+        <p>Query: <span class="highlight">{{ query }}</span></p>
+        <p>Number of matches: <b>{{ num_matches }}</b></p>
+        <h3>Description:</h3>
+        <p>
+        {% for word in wine["description"].split() %}
+            {% if engine == "boolean" %}
+                {% if word.lower().strip(",.;:!?") in query.split() and word.lower().strip(",.;:!?") != "and" and  word.lower().strip(",.;:!?") != "or" and word.lower().strip(",.;:!?") != "not"%}
+                    <b class="highlight">{{ word }}</b>
+               {% else %}
+                    {{ word }}
             {% endif %}
-        {% elif engine == "relevance" %}
-            {% if '"' in query %}
-                {% if query.strip('""') == word.lower().strip(",.;:!?") %}
-                    <b class="highlight"> {{ word }} </b>
+            {% elif engine == "relevance" %}
+                {% if '"' in query %}
+                    {% if query.strip('""') == word.lower().strip(",.;:!?") %}
+                        <b class="highlight"> {{ word }} </b>
+                    {% else %}
+                        {{ word }}
+                    {% endif %}
+                {% elif '*' in query %}
+                    {% if query.strip('*') in word.lower().strip(",.;:!?") %}
+                        <b class="highlight"> {{ word }} </b>
+                    {% else %}
+                        {{ word }}
+                    {% endif %}
                 {% else %}
-                    {{ word }}
-                {% endif %}
-            {% elif '*' in query %}
-                {% if query.strip('*') in word.lower().strip(",.;:!?") %}
-                    <b class="highlight"> {{ word }} </b>
-                {% else %}
-                    {{ word }}
-                {% endif %}
-            {% else %}
-                {% if query == word.lower().strip(",.;:!?") or query in word.lower().strip(",.;:!?") or word.lower().strip(",.;:!?") in query.split()%}
-                    <b class="highlight"> {{ word }} </b>
-                {% else %}
-                    {{ word }}
+                    {% if query == word.lower().strip(",.;:!?") or query in word.lower().strip(",.;:!?") or word.lower().strip(",.;:!?") in query.split()%}
+                        <b class="highlight"> {{ word }} </b>
+                    {% else %}
+                        {{ word }}
+                    {% endif %}
                 {% endif %}
             {% endif %}
-        {% endif %}
-    {% endfor %}
-    </p>
+        {% endfor %}
+        </p>
     
-    <p><b>Variety:</b> 
-    {% for word in wine["variety"].split() %}
-        {% if engine == "boolean" %}
-            {% if word.lower().strip(",.;:!?") in query.split() and word.lower().strip(",.;:!?") != "and" and  word.lower().strip(",.;:!?") != "or" and word.lower().strip(",.;:!?") != "not"%}
-                <b class="highlight">{{ word }}</b>
-            {% else %}
-                {{ word }}
-            {% endif %}
-        {% elif engine == "relevance" %}
-            {% if '"' in query %}
-                {% if query.strip('""') == word.lower().strip(",.;:!?") %}
-                    <b class="highlight"> {{ word }} </b>
+        <p><b>Variety:</b> 
+        {% for word in wine["variety"].split() %}
+            {% if engine == "boolean" %}
+                {% if word.lower().strip(",.;:!?") in query.split() and word.lower().strip(",.;:!?") != "and" and  word.lower().strip(",.;:!?") != "or" and word.lower().strip(",.;:!?") != "not"%}
+                    <b class="highlight">{{ word }}</b>
                 {% else %}
                     {{ word }}
                 {% endif %}
-            {% else %}
-                {% if query == word.lower().strip(",.;:!?") or query in word.lower().strip(",.;:!?") or word.lower().strip(",.;:!?") in query.split()%}
-                    <b class="highlight"> {{ word }} </b>
+            {% elif engine == "relevance" %}
+                {% if '"' in query %}
+                    {% if query.strip('""') == word.lower().strip(",.;:!?") %}
+                        <b class="highlight"> {{ word }} </b>
+                    {% else %}
+                        {{ word }}
+                    {% endif %}
                 {% else %}
-                    {{ word }}
+                    {% if query == word.lower().strip(",.;:!?") or query in word.lower().strip(",.;:!?") or word.lower().strip(",.;:!?") in query.split()%}
+                        <b class="highlight"> {{ word }} </b>
+                    {% else %}
+                        {{ word }}
+                    {% endif %}
                 {% endif %}
             {% endif %}
+        {% endfor %}
+        </p>
+
+        {% if wiki_path %}
+            <p>Read more about this variety <a href="https://en.wikipedia.org/wiki/{{ wiki_path }}" rel="noopener noreferrer" target="_blank">here</a></p>
         {% endif %}
-    {% endfor %}
-    </p>
 
-    {% if wiki_path %}
-        <p>Read more about this variety <a href="https://en.wikipedia.org/wiki/{{ wiki_path }}" rel="noopener noreferrer" target="_blank">here</a></p>
-    {% endif %}
+        <p><b>Price:</b> ${{ wine["price"] }}</p>
+        <p><b>Rating:</b> {{ wine["points"] }}/100 points</p>
 
-    <p><b>Price:</b> ${{ wine["price"] }}</p>
-    <p><b>Rating:</b> {{ wine["points"] }}/100 points</p>
-
-    <h3>Origin:</h3>
-    <table>
-        <tr>
-            {% if wine["country"] != "Unknown" %}
-            <td>
-                <img src="https://www.countryflags.io/{{ flag }}/flat/48.png"> 
-            </td>
-            <td>
-                {{ wine["country"]}}, the '{{ wine["winery"] }}' winery
-            </td>
-            {% else %}
-            <td>
-                Unknown country, the '{{ wine["winery"] }}' winery
-            </td>
-            {% endif %}
-        </tr>
-    </table>
-    </div>
+        <h3>Origin:</h3>
+        <table>
+            <tr>
+                {% if wine["country"] != "Unknown" %}
+                <td>
+                    <img src="https://www.countryflags.io/{{ flag }}/flat/48.png"> 
+                </td>
+                <td>
+                    {{ wine["country"]}}, the '{{ wine["winery"] }}' winery
+                </td>
+                {% else %}
+                <td>
+                    Unknown country, the '{{ wine["winery"] }}' winery
+                </td>
+                {% endif %}
+            </tr>
+        </table>
+        </div>
     </div>
   </div>
 </body>
