@@ -214,10 +214,16 @@
         {% if query_words %}
           <p style="margin-left: 150px">Searched for words: {{query_words}}</p>
         {% endif %}
-          {% if plot_path != "" %}
+          {% if country_plot_path != "" %}
             <button onclick="showCountryPlot()">Show top 10 origin countries</button>
-            <img class="country_plot" id="piechart" src="{{ plot_path }}" style="display:none; margin: auto;">
+            <img class="country_plot" id="piechart" src="{{ country_plot_path }}" style="display:none; margin: auto;">
           {% endif %}
+
+          {% if wordcloud_plot_path != "" %}
+            <button onclick="showWordcloud()">Show description word cloud</button>
+            <img class="country_plot" id="wordcloud" src="{{ wordcloud_plot_path }}" style="display:none; margin: auto;">
+          {% endif %}
+
         {% else %}
         <h4 style="margin-left: 150px; margin-top:75px">No results</h4>
         {% endif %}
@@ -387,6 +393,15 @@
 
     function showCountryPlot() {
       var x = document.getElementById("piechart");
+      if (x.style.display === "none") {
+          x.style.display = "block";
+      } else {
+          x.style.display = "none";
+      }
+    }
+
+    function showWordcloud() {
+      var x = document.getElementById("wordcloud");
       if (x.style.display === "none") {
           x.style.display = "block";
       } else {

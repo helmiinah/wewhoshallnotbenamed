@@ -7,6 +7,7 @@ import matplotlib
 import en_core_web_sm
 import os
 from wordcloud import WordCloud
+from wordcloud import STOPWORDS
 import re
 import math
 import pandas as pd
@@ -72,22 +73,27 @@ def search():
     # Filter the matched wines based on rating
     if min_rating:
         matches = [wine for wine in matches if wine["points"] >= min_rating]
-  
 
     if matches:
         # Generate a random id for the country plot image
         random_id = str(randint(0, 1000000))
 
-        plot_path = 'static/plots/country_plot_' + random_id + '.png'
-        generate_country_plot(matches, plot_path)
+        country_plot_path = 'static/plots/country_plot_' + random_id + '.png'
+        wordcloud_plot_path = 'static/plots/wordcloud_plot_' + random_id + '.png'
+
+        generate_country_plot(matches, country_plot_path)
+        generate_wordcloud_matches(matches, wordcloud_plot_path)
     else:
-        plot_path=''
+        country_plot_path=''
+        wordcloud_plot_path = ''
 
     if wildcard_query_words != "":
-        return render_template('index.html', matches=matches, number=len(matches), query=query, engine_choice=engine_choice, 
-                               plot_path=plot_path, query_words = wildcard_query_words)
+        return render_template('index.html', matches=matches, number=len(matches), query=query, engine_choice=engine_choice,
+                               country_plot_path=country_plot_path, wordcloud_plot_path=wordcloud_plot_path,
+                               query_words=wildcard_query_words)
     else:
-        return render_template('index.html', matches=matches, number=len(matches), query=query, engine_choice=engine_choice, plot_path=plot_path)
+        return render_template('index.html', matches=matches, number=len(matches), query=query, engine_choice=engine_choice,
+                               country_plot_path=country_plot_path, wordcloud_plot_path=wordcloud_plot_path)
 
 
 @app.route('/search/<id>')
@@ -132,7 +138,7 @@ def show_document(id):
                         doc_matches += 1
 
     generate_plot(idx, wine["description"], wine["title"])
-    generate_wordcloud(idx, wine["description"])
+    generate_wordcloud_wine(idx, wine["description"])
 
     wiki_path = re.sub(r"\s", r"_", wine["variety"])
 
@@ -172,7 +178,7 @@ def generate_plot(idx, document, name):
     plt.close()
 
 
-def generate_wordcloud(idx, document):
+def generate_wordcloud_wine(idx, document):
     extractor = pke.unsupervised.TopicRank()
     extractor.load_document(input=document, language='en')
     extractor.candidate_selection()
@@ -187,6 +193,22 @@ def generate_wordcloud(idx, document):
     plt.tight_layout(pad=0)
     plot_path = 'static/plots/' + str(idx) + '_wordcloud.png'
     plt.savefig(plot_path)
+    plt.close()
+
+
+def generate_wordcloud_matches(matches, plot_path):
+    matches = pd.DataFrame(matches)
+    descriptions = " ".join([desc for desc in matches["description"]])
+    stopwords = set(list(STOPWORDS) + ["wine", "drink", "flavor", "flavors", "finish", "aroma", "aromas", "palate"])
+    wordcloud = WordCloud(width=800, height=800,
+                          background_color='#c5b68b',
+                          min_font_size=10,
+                          stopwords=stopwords).generate(descriptions)
+    plt.figure()
+    plt.imshow(wordcloud)
+    plt.axis("off")
+    plt.tight_layout(pad=0)
+    plt.savefig(plot_path, facecolor='#c5b68b')
     plt.close()
 
 
