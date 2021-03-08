@@ -225,7 +225,12 @@ def generate_wordcloud_matches(matches, plot_path):
 
 
 def get_top10_labels(sizes, labels):
-    new_labels = [label if size in sorted(sizes)[-10:] else '' for size, label in zip(sizes, labels)]
+    new_labels = []
+    for size, label in zip(sizes, labels):
+        if size in sorted(sizes)[-10:] and len(new_labels) < 10:
+            new_labels.append(label)
+        else:
+            new_labels.append("")
     return new_labels
 
 
