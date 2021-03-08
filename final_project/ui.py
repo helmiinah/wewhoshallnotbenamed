@@ -131,8 +131,9 @@ def show_document(id):
                     if q_word == word.lower().strip(",.;:!?") or q_word in word.lower().strip(",.;:!?"):
                         doc_matches += 1
 
-    generate_plot(idx, wine["description"], wine["title"])
-    generate_wordcloud(idx, wine["description"])
+    keyphrases = get_keyphrases(wine["description"])
+    generate_plot(keyphrases, idx, wine["title"])
+    generate_wordcloud(keyphrases, idx)
 
     wiki_path = re.sub(r"\s", r"_", wine["variety"])
 
@@ -151,12 +152,16 @@ def show_document(id):
                                 num_matches=doc_matches, engine=engine_choice, wine=wine)
 
 
-def generate_plot(idx, document, name):
+def get_keyphrases(document):
     extractor = pke.unsupervised.TopicRank()
     extractor.load_document(input=document, language='en')
     extractor.candidate_selection()
     extractor.candidate_weighting()
     keyphrases = extractor.get_n_best(n=10)
+    return keyphrases
+
+
+def generate_plot(keyphrases, idx, name):
     phrases = [p[0] for p in keyphrases]
     scores = [p[1] for p in keyphrases]
     plt.figure()
@@ -172,12 +177,8 @@ def generate_plot(idx, document, name):
     plt.close()
 
 
-def generate_wordcloud(idx, document):
-    extractor = pke.unsupervised.TopicRank()
-    extractor.load_document(input=document, language='en')
-    extractor.candidate_selection()
-    extractor.candidate_weighting()
-    keyphrases = dict(extractor.get_n_best(n=30))
+def generate_wordcloud(keyphrases, idx):
+    keyphrases = dict(keyphrases)
     wordcloud = WordCloud(width=800, height=800,
                           background_color='white',
                           min_font_size=10).generate_from_frequencies(keyphrases)
