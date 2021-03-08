@@ -137,14 +137,9 @@ def show_document(id):
                     if q_word == word.lower().strip(",.;:!?") or q_word in word.lower().strip(",.;:!?"):
                         doc_matches += 1
 
-
-    generate_plot(idx, wine["description"], wine["title"])
-    generate_wordcloud_wine(idx, wine["description"])
-
     keyphrases = get_keyphrases(wine["description"])
     generate_plot(keyphrases, idx, wine["title"])
     generate_wordcloud(keyphrases, idx)
-
 
     wiki_path = re.sub(r"\s", r"_", wine["variety"])
 
@@ -186,14 +181,6 @@ def generate_plot(keyphrases, idx, name):
     plot_path = 'static/plots/' + str(idx) + '_plt.png'
     plt.savefig(plot_path)
     plt.close()
-
-
-def generate_wordcloud_wine(idx, document):
-    extractor = pke.unsupervised.TopicRank()
-    extractor.load_document(input=document, language='en')
-    extractor.candidate_selection()
-    extractor.candidate_weighting()
-    keyphrases = dict(extractor.get_n_best(n=30))
 
 
 def generate_wordcloud(keyphrases, idx):
