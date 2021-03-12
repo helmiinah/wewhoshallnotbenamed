@@ -6,6 +6,7 @@ import pke
 import matplotlib
 import en_core_web_sm
 import os
+import os.path
 from wordcloud import WordCloud
 from wordcloud import STOPWORDS
 import re
@@ -123,7 +124,6 @@ def show_document(id):
                 query_splitted.remove("not")
 
             if word.lower().strip(",.;:!?") in query_splitted:
-                print(word.lower().strip(",.;:!?"))
                 doc_matches += 1
 
         elif engine_choice == "relevance":
@@ -139,9 +139,11 @@ def show_document(id):
                     if q_word == word.lower().strip(",.;:!?") or q_word in word.lower().strip(",.;:!?"):
                         doc_matches += 1
 
-    keyphrases = get_keyphrases(wine["description"])
-    generate_plot(keyphrases, idx, wine["title"])
-    generate_wordcloud(keyphrases, idx)
+    #if wine specific plots do not already exist, create them
+    if not os.path.exists('static/plots/' + str(idx) + '_plt.png'):
+      keyphrases = get_keyphrases(wine["description"])
+      generate_plot(keyphrases, idx, wine["title"])
+      generate_wordcloud(keyphrases, idx)
 
     wiki_path = re.sub(r"\s", r"_", wine["variety"])
 
